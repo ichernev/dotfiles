@@ -2,6 +2,18 @@
 
 set -e
 
+my_github_url() {
+  if [ $GIT_SSH -eq 1 ]; then
+    echo "git@github.com:ichernev/$1.git"
+  else
+    echo "git://github.com/ichernev/$1.git"
+  fi
+}
+
+github_url() {
+  echo "git://github.com/$1/$2.git"
+}
+
 setup_commands() {
   if ! which git &> /dev/null; then
     echo "You need to install git"
@@ -9,13 +21,39 @@ setup_commands() {
   fi
 }
 
+setup_sshkeys() {
+  local ans
+  if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
+    echo -n "generate keys (y/n)? "
+    read ans
+    if [ $ans != 'y' -o $ans != 'n' ]; then
+      return
+    fi
+
+    ssh-keygen
+  fi
+
+  if ! ssh git@github.com; then
+    GIT_SSH=0
+    echo -n "No git ssh access. Continue (y/n)? "
+    read ans
+    if [ $ans == 'n' -o $ans == 'N' ]; then
+      echo "Add to github keys:"
+      echo "---------------------------"
+      cat "$HOME/.ssh/id_*.pub"
+      exit 0
+    fi
+  else
+    GIT_SSH=1
+  fi
+}
+
 setup_vim() {
-  REPO="git@github.com:ichernev/vimfiles.git"
   pushd "$HOME"
 
   if [ ! -d .vim ]; then
     echo "cloning vim repo"
-    git clone "$REPO" .vim
+    git clone "$(my_github_url vimfiles)" .vim
   fi
 
   pushd .vim
@@ -36,6 +74,6 @@ setup_vim() {
   fi
 }
 
-for thing in commands vim; do
+for thing in commands sshkeys vim; do
   setup_$thing
 done
