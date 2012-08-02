@@ -31,18 +31,23 @@ setup_sshkeys() {
     fi
   fi
 
-  if ! ssh git@github.com; then
-    GIT_SSH=0
-    echo -n "No git ssh access. Clone read-only (y/n)? "
-    read ans
-    if [ $ans == 'n' -o $ans == 'N' ]; then
-      echo "Add to github keys:"
-      echo "---------------------------"
-      cat "$HOME/.ssh/id_*.pub"
-      exit 0
-    fi
+  if ssh git@github.com &> /dev/null; then
+    :
   else
-    GIT_SSH=1
+    local retval=$?
+    if [ $retval -eq 1 ]; then
+      GIT_SSH=1
+    else
+      GIT_SSH=0
+      echo -n "No git ssh access. Clone read-only (y/n)? "
+      read ans
+      if [ $ans == 'n' -o $ans == 'N' ]; then
+        echo "Add to github keys:"
+        echo "---------------------------"
+        cat "$HOME/.ssh/id_*.pub"
+        exit 0
+      fi
+    fi
   fi
 }
 
@@ -57,7 +62,7 @@ setup_vim() {
   pushd .vim
   git stash save
   git pull -r
-  git stash pop
+  git stash pop |:
   git submodule init
   git submodule update
   popd
