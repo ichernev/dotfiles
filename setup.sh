@@ -26,16 +26,14 @@ setup_sshkeys() {
   if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
     echo -n "generate keys (y/n)? "
     read ans
-    if [ $ans != 'y' -o $ans != 'n' ]; then
-      return
+    if [ $ans == 'y' -o $ans == 'Y' ]; then
+      ssh-keygen
     fi
-
-    ssh-keygen
   fi
 
   if ! ssh git@github.com; then
     GIT_SSH=0
-    echo -n "No git ssh access. Continue (y/n)? "
+    echo -n "No git ssh access. Clone read-only (y/n)? "
     read ans
     if [ $ans == 'n' -o $ans == 'N' ]; then
       echo "Add to github keys:"
