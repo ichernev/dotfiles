@@ -1,0 +1,18 @@
+[user]
+  email = iskren.chernev@gmail.com
+  name = Iskren Chernev
+[alias]
+  st = status
+  ci = commit
+  br = branch
+  co = checkout
+  df = diff
+  dc = diff --cached
+  lg = log -p
+  l = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  ls = ls-files
+[color]
+  diff = auto
+  log = auto
+  status = auto
+  branch = auto

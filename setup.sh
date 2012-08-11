@@ -84,6 +84,21 @@ setup_vim() {
   popd # $HOME
 }
 
-for thing in commands sshkeys vim; do
+setup_git() {
+  pushd "$HOME"
+
+  if [ ! -L .gitconfig ]; then
+    if [ -e .gitconfig ]; then
+      echo "move old .gitconfig to .gitconfig.bac"
+      mv .gitconfig .gitconfig.bac
+    fi
+    echo "linking .gitconfig"
+    ln -s .dotfiles/.gitconfig .gitconfig
+  fi
+
+  popd # $HOME
+}
+
+for thing in commands sshkeys vim git; do
   setup_$thing
 done
