@@ -60,9 +60,10 @@ setup_vim() {
   fi
 
   pushd .vim
-  git stash save
+  git stash save | grep -q 'Saved working directory'
+  stashed=$?
   git pull -r
-  git stash pop |:
+  [ $stashed -eq 0 ] && git stash pop
   git submodule init
   git submodule update
   popd
