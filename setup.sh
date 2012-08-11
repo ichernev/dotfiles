@@ -60,13 +60,17 @@ setup_vim() {
   fi
 
   pushd .vim
+  set +e
   git stash save | grep -q 'Saved working directory'
-  stashed=$?
+  local stashed=$?
+  set -e
+  echo '# Updating vim'
   git pull -r
   [ $stashed -eq 0 ] && git stash pop
+  echo '# Updating submodules'
   git submodule init
   git submodule update
-  popd
+  popd # .vim
 
   if [ ! -L .vimrc ]; then
     if [ -e .vimrc ]; then
@@ -76,6 +80,8 @@ setup_vim() {
     echo "linking .vimrc"
     ln -s .vim/.vimrc .vimrc
   fi
+
+  popd # $HOME
 }
 
 for thing in commands sshkeys vim; do
