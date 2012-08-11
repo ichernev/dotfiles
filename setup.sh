@@ -24,7 +24,7 @@ setup_commands() {
 setup_sshkeys() {
   local ans
   if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
-    echo -n "generate keys (y/n)? "
+    echo -n "generate ssh keys (y/n)? "
     read ans
     if [ $ans == 'y' -o $ans == 'Y' ]; then
       ssh-keygen
