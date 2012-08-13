@@ -14,6 +14,19 @@ github_url() {
   echo "git://github.com/$1/$2.git"
 }
 
+safe_link() {
+  src=$1
+  dst=$([ $# -eq 2 ] && echo $2 || echo $1)
+  if [ ! -L $dst ]; then
+    if [ -e $dst ]; then
+      echo "move old $dst to $dst.bac"
+      mv $dst $dst.bac
+    fi
+    echo "linking $dst"
+    ln -s .dotfiles/$src $dst
+  fi
+}
+
 setup_commands() {
   if ! which git &> /dev/null; then
     echo "You need to install git"
@@ -87,18 +100,25 @@ setup_vim() {
 setup_git() {
   pushd "$HOME"
 
-  if [ ! -L .gitconfig ]; then
-    if [ -e .gitconfig ]; then
-      echo "move old .gitconfig to .gitconfig.bac"
-      mv .gitconfig .gitconfig.bac
-    fi
-    echo "linking .gitconfig"
-    ln -s .dotfiles/.gitconfig .gitconfig
-  fi
+  safe_link .gitconfig
 
   popd # $HOME
 }
 
-for thing in commands sshkeys vim git; do
+setup_zsh() {
+  pushd "$HOME"
+
+  safe_link .zshrc
+  safe_link .zshenv
+  safe_link .zdir
+
+  popd # $HOME
+}
+
+if [ $# -eq 0 ]; then
+  set commands sshkeys vim git zsh
+fi
+
+for thing; do
   setup_$thing
 done
