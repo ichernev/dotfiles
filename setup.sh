@@ -115,8 +115,31 @@ setup_zsh() {
   popd # $HOME
 }
 
+setup_xmonad() {
+  pushd "$HOME"
+
+  if ! which xmonad &> /dev/null; then
+    if ! which cabal &> /dev/null; then
+      echo "install cabal"
+      return
+    fi
+    echo "installing xmonad with cabal"
+    cabal install xmonad xmonad-contrib
+  fi
+
+  safe_link .xinitrc
+  safe_link .xmonad
+  safe_link .xmobarrc
+
+  pushd .xmonad
+  make
+  popd # .xmonad
+
+  popd # $HOME
+}
+
 if [ $# -eq 0 ]; then
-  set commands sshkeys vim git zsh
+  set commands sshkeys vim git zsh xmonad
 fi
 
 for thing; do

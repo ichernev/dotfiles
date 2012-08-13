@@ -1,0 +1,5 @@
+*.hi
+*.o
+xmonad.errors
+xmonad-*-linux
+lib/XMonad/Hooks/PerWindowKbdLayout.hs
