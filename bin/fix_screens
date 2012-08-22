@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ $# -ne 0 ] || xrandr | grep -q 'VGA1 connected ('; then
+  xrandr --output VGA1 --auto --left-of LVDS1
+elif xrandr | grep -q 'VGA1 disconnected .* ('; then
+  xrandr --output VGA1 --off
+fi
+
+xrandr --output LVDS1 --auto

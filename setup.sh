@@ -23,7 +23,7 @@ safe_link() {
       mv $dst $dst.bac
     fi
     echo "linking $dst"
-    ln -s .dotfiles/$src $dst
+    ln -s "$HOME/.dotfiles/$src" "$dst"
   fi
 }
 
@@ -138,8 +138,21 @@ setup_xmonad() {
   popd # $HOME
 }
 
+setup_scripts() {
+  [[ ! -d "$HOME/bin" ]] && mkdir $HOME/bin
+
+  pushd "$HOME/bin"
+
+  for script in $(ls "$HOME/.dotfiles/bin/"); do
+    script_name="$(basename $script)"
+    safe_link "bin/$script_name" "$script_name"
+  done
+
+  popd # $HOME/bin
+}
+
 if [ $# -eq 0 ]; then
-  set commands sshkeys vim git zsh xmonad
+  set commands sshkeys vim git zsh xmonad scripts
 fi
 
 for thing; do

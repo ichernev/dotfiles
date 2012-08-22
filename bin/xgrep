@@ -1,0 +1,16 @@
+#!/bin/bash
+
+got_dir=0
+for opt in "$@"; do
+  [ -d "$opt" ] && got_dir=1
+done
+if [ $got_dir -eq 0 ]; then
+  # add current directory
+  set "$@" .
+fi
+
+# extended regex
+# ignore binary files
+# show line numbers
+# recursive
+exec grep -EInr "$@"

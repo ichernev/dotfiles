@@ -1,0 +1,28 @@
+#!/bin/bash
+
+acpi | gawk '
+BEGIN { FS = ", " } 
+{ 
+  percent = substr($2, 1, index($2, "%") - 1) + 0;
+  if (percent >= 99) percent = ""; else percent = percent "% ";
+  bat_state = substr($1, index($1, ":") + 2); 
+  bat_state = (bat_state == "Discharging" ? "BAT" : "AC");
+  printf("%s%s\n", percent, bat_state)
+}' > /tmp/bat_state
+
+if [ $(cat /tmp/bat_state | wc -c) == 0 ]; then
+  echo "AC"
+else
+  cat /tmp/bat_state
+fi
+
+# case "$(eee_ctl status fsb)" in
+#   performance)
+#     c="^";;
+#   normal)
+#     c="-";;
+#   powersave)
+#     c="v";;
+# esac
+# echo " $c"
+

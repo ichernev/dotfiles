@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat /sys/class/backlight/eeepc/brightness

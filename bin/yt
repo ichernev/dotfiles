@@ -1,0 +1,18 @@
+#!/bin/bash
+
+on() {
+  xset s off
+  xset s noblank
+  xset -dpms
+}
+
+off() {
+  xset s blank
+  xset +dpms
+}
+
+if [[ $# -eq 0 ]]; then
+  set on
+fi
+
+$1
