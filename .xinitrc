@@ -10,7 +10,7 @@ xsetroot -solid black
   stalonetray &> /dev/null &
 } &
 # rsibreak &> /dev/null &
-fix_screens &
+fix_screens force &
 chromium &
 urxvt &
 exec ck-launch-session dbus-launch xmonad
