@@ -67,6 +67,7 @@ for cmd in poweroff pm-suspend reboot energy_state; do
   alias $cmd="sudo $cmd"
 done
 alias cal='cal -m'
+alias feh='feh -ZFd'
 
 # local config
 [ -x ~/.localrc ] && . ~/.localrc
