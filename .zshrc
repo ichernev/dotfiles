@@ -10,10 +10,11 @@ zstyle ':completion:*' original false
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' verbose true
 zstyle :compinstall filename '/home/iskren/.zshrc'
-autoload -U compinit; compinit
 
 fpath=(~/.zdir/completion $fpath)    # add local complation function path
 autoload -U ~/.zdir/completion/*(:t) # autoload all completion functions
+
+autoload -U compinit; compinit
 
 # history
 HISTFILE=~/.histfile
