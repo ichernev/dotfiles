@@ -1,0 +1,46 @@
+#!/bin/bash
+
+swapfile() {
+  mv "$1" "$1.123"
+  mv "$2" "$1"
+  mv "$1.123" "$2"
+}
+
+lang_toggle() {
+  key="$1"
+  setxkbmap -option '' \
+    -option 'terminate:ctrl_alt_bksp' \
+    -option 'ctrl:nocaps' \
+    -option "grp:${key}_shift_toggle"
+}
+
+wm_toggle() {
+  xkey=$1
+  base="$HOME/.xmonad/xmonad.hs"
+  basebin="$HOME/.xmonad/xmonad-i386-linux"
+  sed "s/myModMask .*/myModMask = $1/" "$base" > "${base}.new"
+  diff "${base}.new" "${base}" &> /dev/null && return # do nothing
+  diff "${base}.new" "${base}.old" &> /dev/null
+  if [ $? -eq 0 ]; then
+    # use old binary
+    swapfile "$base"    "${base}.old"
+    swapfile "$basebin" "${basebin}.old"
+  else
+    # oh well, we'll need to recompile
+    mv "$base"       "${base}.old"
+    mv "$basebin"    "${basebin}.old"
+    mv "${base}.new" "$base"
+  fi
+  xmonad --restart
+}
+
+if [ "$1" == 'meta' ]; then
+  lang_toggle alt
+  wm_toggle mod4Mask
+elif [ "$1" == 'alt' ]; then
+  lang_toggle ctrl
+  wm_toggle mod1Mask
+else
+  echo "$(basename $0) alt|meta" >&2
+  exit 1
+fi

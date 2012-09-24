@@ -1,5 +1,12 @@
+# compilation products
 *.hi
 *.o
+lib/XMonad/Hooks/PerWindowKbdLayout.hs
+
+# used for fast swapping
+*.new
+*.old
+
+# runtime files
 xmonad.errors
 xmonad-*-linux
-lib/XMonad/Hooks/PerWindowKbdLayout.hs
