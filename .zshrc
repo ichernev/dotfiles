@@ -57,7 +57,22 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='[%F{green}%n%f %F{yellow}%1~%f$(prompt_git_info)]%% '
+export PROMPT='[%F{green}%n%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]%% '
+
+last_pkg_update() {
+  grep -- '-Syu\|-Suy' /var/log/pacman.log \
+    | tail -n1 \
+    | gawk ' match($0, /\[(.*)\]/, ary) { print ary[1] } '
+}
+
+prompt_pkg_update() {
+  secs_since_upd=$(($(date '+%s') - $(date "-d$(last_pkg_update)" '+%s')))
+  if [ $secs_since_upd -gt $((2 * 7 * 24 * 60 * 60)) ]; then
+    echo " %F{red}update%f"
+  else
+    echo ""
+  fi
+}
 
 # aliases
 alias ls='ls --color=auto'
