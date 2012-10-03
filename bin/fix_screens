@@ -1,9 +1,39 @@
 #!/bin/sh
 
-if [ $# -ne 0 ] || xrandr | grep -q 'VGA1 connected ('; then
-  xrandr --output VGA1 --auto --left-of LVDS1
-elif xrandr | grep -q 'VGA1 disconnected .* ('; then
-  xrandr --output VGA1 --off
-fi
+# If force option is given reinitialize the connected displays
+# Otherwise initialize on change
+force=
+[ $# -eq 1 -a "$1" == 'force' ] && force=1
 
-xrandr --output LVDS1 --auto
+xrandr_cache=$(xrandr)
+port_used() {
+  port="$1"
+  echo "$xrandr_cache" | grep -q "$port [^ ]* .* ("
+}
+
+port_avail() {
+  port="$1"
+  echo "$xrandr_cache" | grep -q "$port connected ("
+}
+
+use_only() {
+  xrandr --output "$1" --auto
+  shift
+  for port in "$@"; do
+    xrandr --output "$port" --off
+  done
+}
+
+if [ -n "$force" ]; then
+  if port_used "VGA1" || port_avail "VGA1"; then
+    use_only "VGA1" "LVDS1"
+  else
+    use_only "LVDS1" "VGA1"
+  fi
+else
+  if port_avail "VGA1"; then
+    use_only "VGA1" "LVDS1"
+  elif port_avail "LVDS1"; then
+    use_only "LVDS1" "VGA1"
+  fi
+fi
