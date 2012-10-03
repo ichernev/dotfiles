@@ -231,8 +231,48 @@ setup_X() {
   done
 }
 
+setup_nenv() {
+  if [ -d "$HOME/.nenv" ]; then
+    pushd $HOME/.nenv
+    # if there is a conflict non zero exit will abort scrip
+    git pull -r
+    popd # $HOME/.nenv
+  else
+    git clone "git://github.com/ryuone/nenv.git" "$HOME/.nenv"
+    cat >> $HOME/.zshenv <<EOF
+# installed by dotfiles/setup.sh
+if [ -d "\$HOME/.nenv" ]; then
+  export PATH="\$HOME/.nenv/shims:\$HOME/.nenv/bin:\$PATH"
+fi
+EOF
+    echo "install nodes with 'nenv install v0.8.9'"
+  fi
+}
+
+setup_rbenv() {
+  if [ -d "$HOME/.rbenv" ]; then
+    pushd $HOME/.rbenv
+    # if there is a conflict non zero exit will abort scrip
+    git pull -r
+    popd # $HOME/.rbenv
+  else
+    git clone "git://github.com/sstephenson/rbenv.git" "$HOME/.rbenv"
+    pushd $HOME/.rbenv/plugins
+    git clone "git://github.com/sstephenson/ruby-build.git"
+    popd
+    cat >> $HOME/.zshenv <<EOF
+# installed by dotfiles/setup.sh
+if [ -d "\$HOME/.rbenv" ]; then
+  export PATH="\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"
+  source "\$HOME/.rbenv/completions/rbenv.zsh"
+fi
+EOF
+    echo "install rubies with 'rbenv install irb'"
+  fi
+}
+
 if [ $# -eq 0 ]; then
-  set commands rc X sshkeys vim git zsh xmonad scripts
+  set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
 fi
 
 for thing; do
