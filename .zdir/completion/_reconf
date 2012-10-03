@@ -1,0 +1,4 @@
+#compdef reconf
+
+_arguments "1: :(alt)"
+_arguments "1: :(meta)"
