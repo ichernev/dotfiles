@@ -27,11 +27,22 @@ safe_link() {
   fi
 }
 
-setup_commands() {
-  if ! which git &> /dev/null; then
-    echo "You need to install git"
-    exit 1
+xdiff() {
+  df=$(diff $1 $2)
+  if [ -n "$df" ]; then
+    echo "$1:"
+    echo "$df"
   fi
+}
+
+setup_commands() {
+  needed=(git vim sudo)
+  for cmd in $needed; do
+    if ! which $cmd &> /dev/null; then
+      echo "You need to install $cmd"
+      exit 1
+    fi
+  done
 }
 
 setup_sshkeys() {
@@ -151,8 +162,61 @@ setup_scripts() {
   popd # $HOME/bin
 }
 
+setup_rc() {
+  # rc.conf
+  if [ -e /etc/rc.conf ]; then
+    xdiff /etc/rc.conf etc/rc.conf
+  else
+    echo "setting up /etc/rc.conf"
+    sudo cp etc/rc.conf /etc/rc.conf
+  fi
+
+  # time
+  if [ -L /etc/localtime ]; then
+    tzl=$(readlink -f /etc/localtime)
+    echo "timezone set to $(date +"%Z") (${tzl##/usr/share/zoneinfo/})"
+  else
+    pushd /etc
+    echo "setting timezone to UTC"
+    sudo unlink localtime
+    sudo ln -s /usr/share/zoneinfo/UTC localtime
+    popd
+  fi
+
+  # locale
+  if [ -e /etc/locale.conf ]; then
+    xdiff /etc/locale.conf etc/locale.conf
+  else
+    echo "setting up /etc/locale.conf"
+    sudo cp etc/locale.conf /etc/locale.conf
+  fi
+
+  if [ -e /etc/locale.gen ]; then
+    xdiff /etc/locale.conf etc/locale.conf
+  else
+    echo "setting up /etc/locale.gen"
+    sudo cp etc/locale.gen /etc/locale.gen
+    sudo locale-gen
+  fi
+
+  # vconsole
+  if [ -e /etc/vconsole.conf ]; then
+    xdiff /etc/vconsole.conf etc/vconsole.conf
+  else
+    echo "setting up /etc/vconsole.conf"
+    sudo cp etc/vconsole.conf /etc/vconsole.conf
+  fi
+
+  # hostname
+  if [ -e /etc/hostname ]; then
+    echo "hostname set to $(cat /etc/hostname)"
+  else
+    sudo vim /etc/hostname
+  fi
+}
+
 if [ $# -eq 0 ]; then
-  set commands sshkeys vim git zsh xmonad scripts
+  set commands rc sshkeys vim git zsh xmonad scripts
 fi
 
 for thing; do
