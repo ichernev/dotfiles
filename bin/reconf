@@ -12,6 +12,9 @@ lang_toggle() {
     -option 'terminate:ctrl_alt_bksp' \
     -option 'ctrl:nocaps' \
     -option "grp:${key}_shift_toggle"
+
+  sudo sed -i "s/grp:.*_shift_toggle/grp:${key}_shift_toggle/" \
+    /etc/X11/xorg.conf.d/01-my-setup-keyboard.conf
 }
 
 wm_toggle() {
