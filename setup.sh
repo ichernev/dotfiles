@@ -215,8 +215,24 @@ setup_rc() {
   fi
 }
 
+setup_X() {
+  l="etc/X11/xorg.conf.d"
+  r="/etc/X11/xorg.conf.d"
+
+  for file in $l/*.conf; do
+    file=${file##$l/}
+    if [ -e "$r/$file" ]; then
+      xdiff "$r/$file" "$l/$file"
+    else
+      echo "installing $r/$file"
+      sudo mkdir -p $r
+      sudo cp "$l/$file" "$r/$file"
+    fi
+  done
+}
+
 if [ $# -eq 0 ]; then
-  set commands rc sshkeys vim git zsh xmonad scripts
+  set commands rc X sshkeys vim git zsh xmonad scripts
 fi
 
 for thing; do
