@@ -10,3 +10,4 @@ lib/XMonad/Hooks/PerWindowKbdLayout.hs
 # runtime files
 xmonad.errors
 xmonad-*-linux
+history
