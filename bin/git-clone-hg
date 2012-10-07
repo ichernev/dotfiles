@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+  echo "$0 hg-repo target-git-repo"
+  echo 0
+fi
+
+hg_repo="$(readlink -f $1)"
+git_repo="$2"
+
+git init "$git_repo"
+cd $git_repo
+$HOME/src/fast-export/hg-fast-export.sh -r "$hg_repo"
+git checkout HEAD

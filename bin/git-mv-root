@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo "$0 new-root"
+  exit 1
+fi
+
+new_root=$1
+index_filter_base='git ls-files -s | sed "s-\t\"*-&new_root/-" |
+                          GIT_INDEX_FILE=$GIT_INDEX_FILE.new \
+                                  git update-index --index-info &&
+                   mv "$GIT_INDEX_FILE.new" "$GIT_INDEX_FILE"'
+index_filter=$(echo "$index_filter_base" | sed "s#new_root#$new_root#")
+
+git filter-branch --index-filter "$index_filter" HEAD

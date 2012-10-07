@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for fn in "$@"; do
+  echo -n "$fn "
+  exiftool "$fn" | gawk ' /Create Date/ { print $4 } '
+done
