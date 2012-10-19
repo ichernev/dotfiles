@@ -1,0 +1,20 @@
+urxvt*scrollBar: 0
+urxvt*font: xft:Droid Sans Mono-11
+urxvt*background: black
+urxvt*foreground: gray
+urxvt*color12: #5C5CFF
+
+! C-= and C--
+URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-12\007
+! URxvt.keysym.C-0x3d: command:\033]50;xft:Oxygen Mono-12:hintstyle=hintnone:antialias=1\007
+URxvt.keysym.C-0:    command:\033]50;xft:Droid Sans Mono-11\007
+URxvt.keysym.C-0x2d: command:\033]50;xft:Monospace-9\007
+! URxvt.perl-ext-common:  default,matcher
+! URxvt.urlLauncher:      /usr/bin/chromium
+! URxvt.matcher.button:   1
+
+scratchpad*scrollBar: 0
+scratchpad*font: xft:Ubuntu Mono-13
+scratchpad*background: #111111
+scratchpad*foreground: gray
+scratchpad*color12: #5C5CFF

@@ -138,6 +138,7 @@ setup_xmonad() {
     cabal install xmonad xmonad-contrib
   fi
 
+  safe_link .Xdefaults
   safe_link .xinitrc
   safe_link .xmonad
   safe_link .xmobarrc
