@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 my_github_url() {
-  if [ $GIT_SSH -eq 1 ]; then
+  if [ "$GIT_SSH" -eq 1 ]; then
     echo "git@github.com:ichernev/$1.git"
   else
     echo "git://github.com/ichernev/$1.git"
@@ -78,7 +78,7 @@ setup_sshkeys() {
 setup_vim() {
   pushd "$HOME"
 
-  if [ ! -d .vim ]; then
+  if [ ! -d .vim/.git ]; then
     echo "cloning vim repo"
     git clone "$(my_github_url vimfiles)" .vim
   fi
