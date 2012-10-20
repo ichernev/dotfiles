@@ -1,13 +1,3 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]; then
-  # get volume
-  amixer get Master | gawk ' /Mono:/ { vol = substr($4, 2, length($4) - 3); printf("%d\n", vol); } '
-elif [ $# -eq 1 ]; then
-  # alter volume
-  case $1 in
-    -) amixer -q set Master 3- unmute ;;
-    +) amixer -q set Master 3+ unmute ;;
-    *) amixer -q set Master $(($1 * 64 / 100)) unmute ;;
-  esac
-fi
+exec ${AUDIO_SYS:-alsa}_vol_ctl "$@"
