@@ -60,9 +60,15 @@ add-zsh-hook precmd update_current_git_vars   # update variables needed for prom
 export PROMPT='[%F{green}%n%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]%% '
 
 last_pkg_update() {
-  grep -- '-Syu\|-Suy' /var/log/pacman.log \
-    | tail -n1 \
-    | gawk ' match($0, /\[(.*)\]/, ary) { print ary[1] } '
+  if [ -f "/var/log/pacman.log" ]; then
+    grep -- '-Syu\|-Suy' /var/log/pacman.log \
+      | tail -n1 \
+      | gawk ' match($0, /\[(.*)\]/, ary) { print ary[1] } '
+  elif [ -f "/var/cache/apt/pkgcache.bin" ]; then
+    ls -l "/var/cache/apt/pkgcache.bin" | gawk ' { print $6, $7 } '
+  else
+    date # output now, so it won't prompt for updates
+  fi
 }
 
 prompt_pkg_update() {
