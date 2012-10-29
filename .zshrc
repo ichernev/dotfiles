@@ -28,8 +28,8 @@ setopt APPEND_HISTORY           # append rather than overwrite history file.
 setopt HIST_IGNORE_DUPS         # ignore duplicate commands
 # setopt HIST_REDUCE_BLANKS       # leave blanks out
 # setopt HIST_SAVE_NO_DUPS        # don't save duplicates
-setopt INC_APPEND_HISTORY       # write after each command
-setopt SHARE_HISTORY            # share history between sessions
+# setopt INC_APPEND_HISTORY       # write after each command
+# setopt SHARE_HISTORY            # share history between sessions
 
 # misc
 setopt AUTO_CD                  # commands that are directories are entered into with cd
