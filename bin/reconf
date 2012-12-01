@@ -20,7 +20,7 @@ lang_toggle() {
 wm_toggle() {
   xkey=$1
   base="$HOME/.xmonad/xmonad.hs"
-  basebin="$HOME/.xmonad/xmonad-i386-linux"
+  basebin="$HOME/.xmonad/xmonad-$(uname -m)-linux"
   sed "s/myModMask .*/myModMask = $1/" "$base" > "${base}.new"
   diff "${base}.new" "${base}" &> /dev/null && return # do nothing
   diff "${base}.new" "${base}.old" &> /dev/null
