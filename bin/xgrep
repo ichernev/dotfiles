@@ -13,4 +13,4 @@ fi
 # ignore binary files
 # show line numbers
 # recursive
-exec grep -EInrs "$@" --exclude-dir='.git' --exclude-dir='.svn' --exclude='tags' --exclude='cscope.out'
+exec grep -EInrs "$@" --exclude-dir='.git' --exclude-dir='.svn' --exclude='tags' --exclude='cscope.out' --exclude-dir='.hg'
