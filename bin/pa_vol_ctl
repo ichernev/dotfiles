@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # TODO: Handle multiple sinks
-sink_vol=($(pacmd dump | grep set-sink-volume | head -n1))
+sink_vol=($(pacmd dump | grep set-sink-volume | grep analog | head -n1))
 sink=${sink_vol[1]}
 raw_vol=$((${sink_vol[2]}))
 max_vol=$((0x10000))
