@@ -36,7 +36,7 @@ xdiff() {
 }
 
 setup_commands() {
-  needed=(git vim sudo)
+  needed=(git vim sudo ssh xrandr)
   for cmd in $needed; do
     if ! which $cmd &> /dev/null; then
       echo "You need to install $cmd"
@@ -240,12 +240,6 @@ setup_nenv() {
     popd # $HOME/.nenv
   else
     git clone "git://github.com/ryuone/nenv.git" "$HOME/.nenv"
-    cat >> $HOME/.zshenv <<EOF
-# installed by dotfiles/setup.sh
-if [ -d "\$HOME/.nenv" ]; then
-  export PATH="\$HOME/.nenv/shims:\$HOME/.nenv/bin:\$PATH"
-fi
-EOF
     echo "install nodes with 'nenv install v0.8.9'"
   fi
 }
@@ -258,16 +252,10 @@ setup_rbenv() {
     popd # $HOME/.rbenv
   else
     git clone "git://github.com/sstephenson/rbenv.git" "$HOME/.rbenv"
+    mkdir -p $HOME/.rbenv/plugins
     pushd $HOME/.rbenv/plugins
     git clone "git://github.com/sstephenson/ruby-build.git"
     popd
-    cat >> $HOME/.zshenv <<EOF
-# installed by dotfiles/setup.sh
-if [ -d "\$HOME/.rbenv" ]; then
-  export PATH="\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"
-  source "\$HOME/.rbenv/completions/rbenv.zsh"
-fi
-EOF
     echo "install rubies with 'rbenv install irb'"
   fi
 }
