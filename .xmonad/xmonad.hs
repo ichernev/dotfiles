@@ -72,7 +72,7 @@ myNumlockMask   = mod2Mask
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
 -- myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
-myWorkspaces = ["term", "web", "chat"] ++ map show [4..9] ++ map (("F" ++) . show) [1..6]
+myWorkspaces = ["web", "vim", "term"] ++ map show [4..9] ++ ["F1", "spotify"] ++ map (("F" ++) . show) [3..6]
 
 -- Border colors for unfocused and focused windows, respectively.
 --
@@ -247,12 +247,15 @@ myManageHook = composeAll
     --  className =? "MPlayer"        --> doFloat
     -- ,
       isFullscreen --> doFullFloat
+    -- , resource  =? "xmobar"         --> doIgnore
     , className =? "Gimp"           --> doFloat
     , className =? "stalonetray"    --> doIgnore
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore
     , className =? "Chromium"       --> doShift "web"
-      ]
+    , className =? "Google-chrome"  --> doShift "web"
+    , className =? "Spotify"        --> doShift "spotify"
+    ]
 
 ------------------------------------------------------------------------
 -- Event handling
@@ -308,7 +311,7 @@ main = do
     -- spawn "fix_screens"
     -- spawn "chromium"
     -- spawn myTerminal
-    xmonad $ defaultConfig
+    xmonad $ ewmh defaultConfig
         { terminal = myTerminal
         , keys = myKeys
         , modMask = myModMask
@@ -318,9 +321,10 @@ main = do
                                     <+> manageScratchPad
                                     <+> manageHook defaultConfig
         , workspaces = myWorkspaces
+        -- , layoutHook = avoidStruts myLayout
         , layoutHook = smartBorders $ avoidStruts
                      $ myLayout -- layoutHook defaultConfig
-                     -- $ onWorkspace "chat" Full
+        --              -- $ onWorkspace "chat" Full
         , logHook = dynamicLogWithPP $ xmobarPP
                        { ppOutput = hPutStrLn xmproc
                        , ppTitle = xmobarColor "green" "" -- . shorten 50
@@ -335,8 +339,8 @@ main = do
         , ("M-<Left>", prevWS)
         , ("M-<Right>", nextWS)
         -- music
-        , ("M-C-p", spawn "mpc toggle")
-        , ("M-C-n", spawn "mpc next")
+        , ("M-C-p", spawn "spotctl playpause")
+        , ("M-C-n", spawn "spotctl next")
         -- scratchpad
         , ("M-`", scratchpadSpawnActionTerminal myTerminal)
         -- xscreensaver lock

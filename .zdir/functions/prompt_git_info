@@ -17,6 +17,6 @@ if [ -n "$__CURRENT_GIT_BRANCH" ]; then
 	fi
 	s+=""
 
-	printf " %s%s%s" "%{${fg[cyan]}%}" $s "%{${reset_color}%}"
+	echo " $s"
 fi
 # vim: ft=zsh

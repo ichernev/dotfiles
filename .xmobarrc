@@ -1,13 +1,18 @@
 -- vim: set filetype=haskell :
 Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
-         font = "xft:DejaVu Sans Mono-8"
+         font = "xft:DejaVu Sans Mono-11"
        , bgColor = "black"
        , lowerOnStart = False
        , fgColor = "grey"
+       , position = Top
+       , border = NoBorder
+       , borderColor = "black"
+       , hideOnStart = False
+       , persistent = True
        -- , position = TopW L 90
-       , position = Static { xpos = 0, ypos = 0, width = 944, height = 16 }
+       -- , position = Static { xpos = 0, ypos = 0, width = 944, height = 16 }
        , commands = [ -- Run Weather "LBSF" ["-t","<station>: <tempC>C","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
-                      Run Weather "EDDR" ["-t", "<tempC>C",
+                      Run Weather "KPAO" ["-t", "<tempC>C",
                                           "-L", "64",
                                           "-H", "77",
                                           "--normal", "green",
@@ -22,7 +27,7 @@ Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
                     -- , Run Com "disp_info" ["-xmobar"] "" 50
                     , Run Com "load_aver" [] "" 70
                     , Run Com "bat_state" [] "" 150
-                    , Run Com "cat" ["/sys/class/backlight/eeepc/brightness"] "brightness" 50
+                    , Run Com "brightness" [] "brightness" 10
                     -- , Run Swap [] 10
                     , Run Date "%a %e %b %H:%M" "date" 100
                     , Run StdinReader
@@ -30,5 +35,5 @@ Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
        , sepChar = "%"
        , alignSep = "}{"
        -- add disp_info after eeepc_laptop is loaded
-       , template = "%StdinReader% }{ [%bat_state% | %memory% | %load_aver%] <fc=#ffff00>%brightness%</fc> <fc=#00dd77>%vol_ctl%</fc> <fc=#ee9a00>%date%</fc> | %EDDR%"
+       , template = "%StdinReader% }{ [%bat_state% | %memory% | %load_aver%] <fc=#ffff00>%brightness%</fc> <fc=#00dd77>%vol_ctl%</fc> <fc=#ee9a00>%date%</fc> | %KPAO%"
        }

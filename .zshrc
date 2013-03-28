@@ -9,6 +9,7 @@ zstyle ':completion:*' menu select=long
 zstyle ':completion:*' original false
 zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
 zstyle ':completion:*' verbose true
+zstyle ":completion:*:commands" rehash 1
 zstyle :compinstall filename '/home/iskren/.zshrc'
 
 fpath=(~/.zdir/completion $fpath)    # add local complation function path
@@ -18,8 +19,8 @@ autoload -U compinit; compinit
 
 # history
 HISTFILE=~/.histfile
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 setopt APPEND_HISTORY           # append rather than overwrite history file.
 # setopt EXTENDED_HISTORY         # save timestamp and runtime information
 # setopt HIST_EXPIRE_DUPS_FIRST   # allow dups, but expire old ones when I hit HISTSIZE
@@ -57,7 +58,7 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='[%F{green}%n%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]%% '
+export PROMPT='[%F{magenta}ugly%f %F{yellow}%1~%f%F{cyan}$(prompt_git_info)%f%F{red}$(prompt_pkg_update)%f%F{white}$(screen_title)%f]%% '
 
 last_pkg_update() {
   if [ -f "/var/log/pacman.log" ]; then
@@ -80,6 +81,11 @@ prompt_pkg_update() {
   fi
 }
 
+screen_title() {
+  [ -z "$STY" ] && return
+  echo "$STY" | gawk ' BEGIN { FS = "." } { printf(" %s", $2) } '
+}
+
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -90,6 +96,9 @@ for cmd in poweroff pm-suspend reboot energy_state; do
 done
 alias cal='cal -m'
 alias feh='feh -ZFd'
+alias sc='sudo systemctl'
+alias poweroff='sc poweroff'
+alias reboot='sc reboot'
 
 # local config
 [ -x ~/.localrc ] && . ~/.localrc

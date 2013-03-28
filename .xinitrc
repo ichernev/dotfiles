@@ -1,6 +1,9 @@
 # quick and durty test
 # exec xmonad
 
+xset +fp /usr/share/fonts/local
+xset fp rehash
+
 xsetroot -cursor_name left_ptr
 xsetroot -solid black
 # xscreensaver &

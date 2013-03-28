@@ -2,11 +2,11 @@ urxvt*scrollBar: 0
 urxvt*font: xft:Droid Sans Mono-11
 urxvt*background: black
 urxvt*foreground: gray
-urxvt*color12: #5C5CFF
-urxvt*saveLines: 1000000
-urxvt*scrollTtyOutput: false
-urxvt*scrollWithBuffer: true
-urxvt*scrollTtyKeypress: true
+*color12: #5C5CFF
+*saveLines: 1000000
+*scrollTtyOutput: false
+*scrollWithBuffer: true
+*scrollTtyKeypress: true
 
 ! C-= and C--
 URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-12\007

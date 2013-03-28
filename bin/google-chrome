@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -- "--proxy-pac-url=file://$HOME/.imo.proxy.pac" "$@"
+
 [[ -x /usr/bin/chromium ]] && exec /usr/bin/chromium "$@"
 [[ -x /usr/bin/google-chrome ]] && exec /usr/bin/google-chrome "$@"
 
