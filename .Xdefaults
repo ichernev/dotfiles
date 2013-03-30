@@ -1,12 +1,20 @@
-urxvt*scrollBar: 0
+! Common terminal stuff
+*scrollBar: 0
+*foreground: gray
+*color4: #5C5CFF
+*color12: #5C5CFF
+*saveLines: 1000000
+*scrollTtyOutput: false
+*scrollWithBuffer: true
+*scrollTtyKeypress: true
+
+! normal terminal
 urxvt*font: xft:Droid Sans Mono-11
-urxvt*background: black
-urxvt*foreground: gray
-urxvt*color12: #5C5CFF
-urxvt*saveLines: 1000000
-urxvt*scrollTtyOutput: false
-urxvt*scrollWithBuffer: true
-urxvt*scrollTtyKeypress: true
+urxvt*background: #000000
+
+! scratchpad
+scratchpad*font: xft:Monospace-10
+scratchpad*background: #111111
 
 ! C-= and C--
 URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-12\007
@@ -17,8 +25,38 @@ URxvt.keysym.C-0x2d: command:\033]50;xft:Monospace-9\007
 ! URxvt.urlLauncher:      /usr/bin/chromium
 ! URxvt.matcher.button:   1
 
-scratchpad*scrollBar: 0
-scratchpad*font: xft:Monospace-11
-scratchpad*background: #111111
-scratchpad*foreground: gray
-scratchpad*color12: #5C5CFF
+! Konsole dark pastel theme
+! *color0:  #3f3f3f
+! *color1:  #705050
+! *color2:  #60b48a
+! *color3:  #dfaf8f
+! *color4:  #9ab9d7
+! *color5:  #dc8cc4
+! *color6:  #8cd1d3
+! *color7:  #dcdccd
+! *color8:  #709080
+! *color9:  #dca3a3
+! *color10: #72d5a2
+! *color11: #f0dfaf
+! *color12: #94c0f3
+! *color13: #ec93d5
+! *color14: #93e1e3
+! *color15: #ffffff
+
+! Equiluminous color theme
+! *color0:  #3F3F3F
+! *color1:  #DC0000
+! *color2:  #00A200
+! *color3:  #A17500
+! *color4:  #6161FF
+! *color5:  #BF00BF
+! *color6:  #009595
+! *color7:  #BFBFBF
+! *color8:  #7F7F7F
+! *color9:  #FF9A9A
+! *color10: #00F300
+! *color11: #C9C900
+! *color12: #B5B5FF
+! *color13: #FF7CFF
+! *color14: #00E0E0
+! *color15: #FFFFFF
