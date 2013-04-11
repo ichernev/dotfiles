@@ -64,7 +64,7 @@ last_pkg_update() {
   if [ -f "/var/log/pacman.log" ]; then
     grep -- '-Syu\|-Suy' /var/log/pacman.log \
       | tail -n1 \
-      | gawk ' match($0, /\[(.*)\]/, ary) { print ary[1] } '
+      | gawk ' match($0, /\[([^]]*)\]/, ary) { print ary[1] } '
   elif [ -f "/var/cache/apt/pkgcache.bin" ]; then
     ls -l "/var/cache/apt/pkgcache.bin" | gawk ' { print $6, $7 } '
   else
