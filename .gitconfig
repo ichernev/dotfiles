@@ -10,6 +10,7 @@
   dc = diff --cached
   lg = log -p
   l = log --graph --decorate --pretty=oneline --abbrev-commit --all
+  lz = log --graph --decorate --pretty=oneline --abbrev-commit
   ls = ls-files
 [color]
   diff = auto
