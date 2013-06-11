@@ -6,4 +6,7 @@ lib/XMonad/Hooks/PerWindowKbdLayout.hs: lib/XMonad/Hooks/PerWindowKbdLayout.hsc
 xmonad-i386-linux: lib/XMonad/Hooks/PerWindowKbdLayout.hs xmonad.hs
 	xmonad --recompile
 
+clean:
+	rm -f lib/XMonad/Hooks/PerWindowKbdLayout.hs xmonad-i386-linux
+
 .PHONY: all
