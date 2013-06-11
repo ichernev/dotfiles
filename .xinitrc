@@ -16,4 +16,5 @@ xsetroot -solid black
 fix_screens force &
 chromium &
 urxvt &
-exec ck-launch-session dbus-launch xmonad
+# exec ck-launch-session dbus-launch xmonad
+exec dbus-launch xmonad
