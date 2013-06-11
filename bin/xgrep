@@ -1,16 +1,26 @@
 #!/bin/bash
 
-got_dir=0
+got_location=0
 for opt in "$@"; do
-  [ -d "$opt" ] && got_dir=1
+  [ -d "$opt" -o -f "$opt" ] && got_location=1
 done
-if [ $got_dir -eq 0 ]; then
-  # add current directory
-  set "$@" .
+if [ -t 1 ]; then
+    # ttys deserve some spice
+    color="--color"
+fi
+if [ $got_location -eq 0 ]; then
+  # adding currect dir
+  set -- "$@" .
 fi
 
 # extended regex
 # ignore binary files
 # show line numbers
 # recursive
-exec grep -EInrs "$@" --exclude-dir='.git' --exclude-dir='.svn' --exclude='tags' --exclude='cscope.out' --exclude-dir='.hg'
+exec grep -EInrs "$@" $color \
+    --exclude-dir='.git' \
+    --exclude-dir='.svn' \
+    --exclude='tags' \
+    --exclude='cscope.out' \
+    --exclude-dir='.hg' \
+    --exclude-dir='build'
