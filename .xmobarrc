@@ -1,11 +1,11 @@
 -- vim: set filetype=haskell :
 Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
-         font = "xft:DejaVu Sans Mono-8"
+         font = "xft:Droid Sans Mono-10"
        , bgColor = "black"
        , lowerOnStart = False
        , fgColor = "grey"
-       -- , position = TopW L 90
-       , position = Static { xpos = 0, ypos = 0, width = 944, height = 16 }
+       , position = TopW L 90
+       -- , position = Static { xpos = 0, ypos = 0, width = 1920, height = 20 }
        , commands = [ -- Run Weather "LBSF" ["-t","<station>: <tempC>C","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000
                       Run Weather "EDDR" ["-t", "<tempC>C",
                                           "-L", "64",
@@ -30,5 +30,5 @@ Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
        , sepChar = "%"
        , alignSep = "}{"
        -- add disp_info after eeepc_laptop is loaded
-       , template = "%StdinReader% }{ [%bat_state% | %memory% | %load_aver%] <fc=#ffff00>%brightness%</fc> <fc=#00dd77>%vol_ctl%</fc> <fc=#ee9a00>%date%</fc> | %EDDR%"
+       , template = "%StdinReader% }{ [%bat_state% | %memory% | %load_aver%] <fc=#00dd77>%vol_ctl%</fc> <fc=#ee9a00>%date%</fc> | %EDDR%"
        }
