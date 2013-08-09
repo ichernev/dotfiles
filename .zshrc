@@ -38,6 +38,7 @@ setopt NOMATCH                  # file patterns that do not match fail loudly
 unsetopt BEEP                   # do not beep on error
 unsetopt EXTENDED_GLOB          # do not treat # ~ and ^ as part of patterns
 unsetopt NOTIFY                 # do not report status of background jobs immediately
+setopt INTERACTIVECOMMENTS      # enable the use of '#' char for comments on the cmd line
 
 # bindings
 bindkey -e
