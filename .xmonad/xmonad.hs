@@ -345,6 +345,7 @@ main = do
         , ("M-`", scratchpadSpawnActionTerminal myTerminal)
         -- xscreensaver lock
         , ("M-C-l", spawn "slock")
-        -- copy (like Ctrl+c, but works everywhere)
-        , ("M-c", spawn "xsel -op | xsel -ib")
+        -- copy and paste, (fro-to selection, then shift-insert)
+        , ("M-c", spawn "xcopy")
+        , ("M-v", spawn "xselectcb")
         ]
