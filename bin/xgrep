@@ -23,4 +23,5 @@ exec grep -EInrs "$@" $color \
     --exclude='tags' \
     --exclude='cscope.out' \
     --exclude-dir='.hg' \
-    --exclude-dir='build'
+    --exclude-dir='build' \
+    --exclude-dir='node_modules'
