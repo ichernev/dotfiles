@@ -18,4 +18,4 @@
   status = auto
   branch = auto
 [push]
-	default = simple
+  default = simple
