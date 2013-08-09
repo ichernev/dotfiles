@@ -1,4 +1,4 @@
 #!/bin/bash
 
-# copy primary selection to clipboard
+# copy clipboard to primary selection
 exec xsel -ob | xsel -ip

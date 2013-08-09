@@ -59,7 +59,14 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='[%F{green}%n%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]%% '
+export PROMPT='|$(imo_repo)| [%F{cyan}desk%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]$(maybe_chroot)%% '
+
+maybe_chroot() {
+  if [ -f /etc/debian_chroot ]; then
+    chr=$(cat /etc/debian_chroot)
+    echo -n " %F{magenta}$chr%f "
+  fi
+}
 
 last_pkg_update() {
   if [ -f "/var/log/pacman.log" ]; then
@@ -80,6 +87,37 @@ prompt_pkg_update() {
   else
     echo ""
   fi
+}
+
+imo_repo() {
+  # repo_name="$(basename $IMO_HOME)"
+  # hg_prompt=$(builtin cd $IMO_HOME; hg prompt "{branch}")
+  hg_prompt="$(builtin cd $IMO_HOME; hg branch)"
+
+  echo "$hg_prompt"
+}
+
+# change IMO_HOME if you 'cd' into another home
+function cd {
+  builtin cd "$@"
+
+  # bail unless imo
+  [ -z "$IMO_HOME" ] && return
+
+  slashes=$(echo $IMO_HOME | sed 's_[^/]__g')
+  dir_depth=${#slashes}
+
+  IMO_REPOS=$(dirname $IMO_HOME)
+  # we are inside imo home or we're not in a repo inside IMO_REPOS
+  [ "${PWD#$IMO_HOME}" != "$PWD" -o "${PWD#$IMO_REPOS/}" = "$PWD" ] && return
+  # blacklist non-imo.im repos
+  repo=$(echo $PWD | cut -d/ -f$(($dir_depth + 1)))
+  echo "$repo" | grep -Eq "deb_packages|imoxml|sleekxmpp|puppet|design" && return
+  # [ "${PWD#$IMO_REPOS/deb_packages}" != "$PWD" ] && return
+  # we are inside another home
+  ih $(echo ${PWD#$IMO_REPOS/} | cut -d/ -f 1) silent
+  # clean up
+  unset repo IMO_REPOS slashes dir_depth
 }
 
 # aliases

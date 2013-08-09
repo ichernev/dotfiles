@@ -45,7 +45,7 @@ myBorderWidth   = 2
 -- ("right alt"), which does not conflict with emacs keybindings. The
 -- "windows key" is usually mod4Mask.
 --
-myModMask = mod4Mask
+myModMask = mod1Mask
 
 -- The mask for the numlock key. Numlock status is "masked" from the
 -- current modifier status, so the keybindings will work with numlock on or
@@ -78,7 +78,7 @@ myWorkspaces = ["web", "vim", "term"] ++ map show [4..9] ++ ["mail", "spotify"] 
 --
 myNormalBorderColor  = "#333333"
 myFocusedBorderColor = "#ff0000"
-x_font = "-*-terminus-medium-r-normal-*-18-*-*-*-*-*-iso10646-*"
+x_font = "-*-courier-medium-r-normal-*-17-*-*-*-*-*-iso10646-*"
 dmenu_run = "dmenu_run -fn \"" ++ x_font ++ "\" -nb '#000' -nf '#aaa' -sb '#aaa' -sf '#000'"
 
 ------------------------------------------------------------------------
@@ -154,7 +154,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also the statusBar function from Hooks.DynamicLog.
     --
-    , ((modm              , xK_b     ), sendMessage ToggleStruts)
+    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
 
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
@@ -307,6 +307,7 @@ manageScratchPad = scratchpadManageHook (W.RationalRect l t w h)
 -- main = do xmonad defaults -- spawn "xterm -e '/usr/bin/man xmonad'"
 main = do
     xmproc <- spawnPipe "xmobar"
+    spawn "prepx"
     -- spawn "one_stalone"
     -- spawn "ensure rsibreak"
     -- spawn "fix_screens"
@@ -345,6 +346,7 @@ main = do
         , ("M-`", scratchpadSpawnActionTerminal myTerminal)
         -- xscreensaver lock
         , ("M-C-l", spawn "slock")
-        -- copy (like Ctrl+c, but works everywhere)
-        , ("M-c", spawn "xsel -op | xsel -ib")
+        -- copy and paste, (fro-to selection, then shift-insert)
+        , ("M-c", spawn "xcopy")
+        , ("M-v", spawn "xselectcb")
         ]
