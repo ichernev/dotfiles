@@ -11,6 +11,7 @@ zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p
 zstyle ':completion:*' verbose true
 zstyle ":completion:*:commands" rehash 1
 zstyle :compinstall filename '/home/iskren/.zshrc'
+zstyle ":completion:*:commands" rehash 1 # auto rehash
 
 fpath=(~/.zdir/completion $fpath)    # add local complation function path
 autoload -U ~/.zdir/completion/*(:t) # autoload all completion functions
@@ -38,6 +39,7 @@ setopt NOMATCH                  # file patterns that do not match fail loudly
 unsetopt BEEP                   # do not beep on error
 unsetopt EXTENDED_GLOB          # do not treat # ~ and ^ as part of patterns
 unsetopt NOTIFY                 # do not report status of background jobs immediately
+setopt INTERACTIVECOMMENTS      # enable the use of '#' char for comments on the cmd line
 
 # bindings
 bindkey -e
