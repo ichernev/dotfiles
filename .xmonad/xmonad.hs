@@ -247,12 +247,16 @@ myManageHook = composeAll
     --  className =? "MPlayer"        --> doFloat
     -- ,
       isFullscreen --> doFullFloat
-    , className =? "Gimp"           --> doFloat
-    , className =? "stalonetray"    --> doIgnore
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore
-    , className =? "Chromium"       --> doShift "web"
-      ]
+    , className =? "Gimp"             --> doFloat
+    , className =? "stalonetray"      --> doIgnore
+    , resource  =? "desktop_window"   --> doIgnore
+    , resource  =? "kdesktop"         --> doIgnore
+    -- , className =? "Firefox"          --> doShift "mail"
+    , className =? "Chromium-browser" --> doShift "mail"
+    , className =? "Chromium"         --> doShift "web"
+    , className =? "Google-chrome"    --> doShift "web"
+    , className =? "Spotify"          --> doShift "spotify"
+    ]
 
 ------------------------------------------------------------------------
 -- Event handling
