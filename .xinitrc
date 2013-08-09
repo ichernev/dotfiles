@@ -10,11 +10,16 @@ xsetroot -solid black
 # make sure the tray runs after xmonad has started
 {
   sleep 10
-  stalonetray &> /dev/null &
+  # stalonetray &> /dev/null &
+  trayer --edge top --align right \
+    --widthtype pixel --width 100 \
+    --heighttype pixel --height 20 \
+    --tint 0x000000 --alpha 0 --transparent true &> /dev/null &
 } &
 # rsibreak &> /dev/null &
 fix_screens force &
 chromium &
 urxvt &
 # exec ck-launch-session dbus-launch xmonad
-exec dbus-launch xmonad
+pulseaudio --check || pulseaudio --start -D
+exec dbus-launch --exit-with-session xmonad
