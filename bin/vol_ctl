@@ -1,3 +1,4 @@
 #!/bin/bash
 
+which pulseaudio &> /dev/null && pulseaudio --check && AUDIO_SYS=pa
 exec ${AUDIO_SYS:-alsa}_vol_ctl "$@"
