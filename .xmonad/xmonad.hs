@@ -339,8 +339,8 @@ main = do
         , ("M-<Left>", prevWS)
         , ("M-<Right>", nextWS)
         -- music
-        , ("M-C-p", spawn "mpc toggle")
-        , ("M-C-n", spawn "mpc next")
+        , ("M-C-p", spawn "spotctl playpause")
+        , ("M-C-n", spawn "spotctl next")
         -- scratchpad
         , ("M-`", scratchpadSpawnActionTerminal myTerminal)
         -- xscreensaver lock
