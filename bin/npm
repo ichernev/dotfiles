@@ -1,0 +1,7 @@
+#!/bin/bash
+
+~/.nenv/shims/npm "$@"
+
+echo "$*" | grep -Eq "\<(un)?install\>" && \
+  echo "$*" | grep -q -- '-g\>' && \
+  echo "nenv rehash" && nenv rehash
