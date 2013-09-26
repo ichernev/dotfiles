@@ -60,7 +60,7 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='[%F{magenta}ugly%f %F{yellow}%1~%f%$(prompt_git_info)%F{red}$(prompt_pkg_update)%f%F{white}$(screen_title)%f]%% '
+export PROMPT='[%F{magenta}ugly%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)%F{white}$(screen_title)%f]%% '
 
 last_pkg_update() {
   if [ -f "/var/log/pacman.log" ]; then
