@@ -17,3 +17,5 @@
   log = auto
   status = auto
   branch = auto
+[push]
+  default = current
