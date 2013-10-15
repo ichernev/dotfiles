@@ -125,8 +125,8 @@ alias ls='ls --color=auto'
 alias ll='ls -l'
 alias cdf='colordiff | less -R'
 
-for cmd in poweroff pm-suspend reboot energy_state; do
-  alias $cmd="sudo $cmd"
+for cmd in poweroff reboot; do
+  alias "${cmd}X"="sudo $cmd"
 done
 alias cal='cal -m'
 alias feh='feh -ZFd'
