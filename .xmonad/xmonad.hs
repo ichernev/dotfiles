@@ -78,7 +78,7 @@ myWorkspaces = ["web", "vim", "term"] ++ map show [4..9] ++ ["mail", "spotify"] 
 --
 myNormalBorderColor  = "#333333"
 myFocusedBorderColor = "#ff0000"
-x_font = "-*-courier-medium-r-normal-*-17-*-*-*-*-*-iso10646-*"
+x_font = "-*-fixed-medium-r-normal-*-17-*-*-*-*-*-iso10646-*"
 dmenu_run = "dmenu_run -fn \"" ++ x_font ++ "\" -nb '#000' -nf '#aaa' -sb '#aaa' -sf '#000'"
 
 ------------------------------------------------------------------------
