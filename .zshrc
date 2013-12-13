@@ -82,6 +82,9 @@ prompt_pkg_update() {
   fi
 }
 
+
+export EDITOR=vim
+
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -92,6 +95,13 @@ for cmd in poweroff pm-suspend reboot energy_state; do
 done
 alias cal='cal -m'
 alias feh='feh -ZFd'
+
+# http://stackoverflow.com/questions/11025063/how-do-i-get-zsh-to-display-the-current-directory-in-the-terminal-frame
+settitle() { printf "\e]0;$@\a" }
+dir_in_title() { settitle "zsh: ${PWD/$HOME/~}" }
+chpwd_functions=(dir_in_title)
+# init
+dir_in_title
 
 # local config
 [ -x ~/.localrc ] && . ~/.localrc
