@@ -90,9 +90,7 @@ prompt_pkg_update() {
 }
 
 imo_repo() {
-  # repo_name="$(basename $IMO_HOME)"
-  # hg_prompt=$(builtin cd $IMO_HOME; hg prompt "{branch}")
-  hg_prompt="$(builtin cd $IMO_HOME; hg branch)"
+  hg_prompt="$(hg -R $IMO_HOME branch)"
 
   echo "$hg_prompt"
 }
@@ -120,6 +118,8 @@ function cd {
   unset repo IMO_REPOS slashes dir_depth
 }
 
+export EDITOR=vim
+
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -130,6 +130,13 @@ for cmd in poweroff reboot; do
 done
 alias cal='cal -m'
 alias feh='feh -ZFd'
+
+# http://stackoverflow.com/questions/11025063/how-do-i-get-zsh-to-display-the-current-directory-in-the-terminal-frame
+settitle() { printf "\e]0;$@\a" }
+dir_in_title() { settitle "zsh: ${PWD/$HOME/~}" }
+chpwd_functions=(dir_in_title)
+# init
+dir_in_title
 
 # local config
 [ -x ~/.localrc ] && . ~/.localrc
