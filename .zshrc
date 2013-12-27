@@ -88,6 +88,8 @@ screen_title() {
   echo "$STY" | gawk ' BEGIN { FS = "." } { printf(" %s", $2) } '
 }
 
+export EDITOR=vim
+
 # aliases
 alias ls='ls --color=auto'
 alias ll='ls -l'
@@ -101,6 +103,13 @@ alias feh='feh -ZFd'
 alias sc='sudo systemctl'
 alias poweroff='sc poweroff'
 alias reboot='sc reboot'
+
+# http://stackoverflow.com/questions/11025063/how-do-i-get-zsh-to-display-the-current-directory-in-the-terminal-frame
+settitle() { printf "\e]0;$@\a" }
+dir_in_title() { settitle "zsh: ${PWD/$HOME/~}" }
+chpwd_functions=(dir_in_title)
+# init
+dir_in_title
 
 # local config
 [ -x ~/.localrc ] && . ~/.localrc
