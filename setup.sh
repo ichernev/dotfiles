@@ -28,7 +28,7 @@ safe_link() {
 }
 
 xdiff() {
-  df=$(diff $1 $2)
+  df=$(sudo diff $1 $2)
   if [ -n "$df" ]; then
     echo "$1:"
     echo "$df"
