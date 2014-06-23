@@ -3,7 +3,7 @@
 set -e
 
 my_github_url() {
-  if [ "$GIT_SSH" -eq 1 ]; then
+  if [ "$GIT_SSH" = 1 ]; then
     echo "git@github.com:ichernev/$1.git"
   else
     echo "git://github.com/ichernev/$1.git"
