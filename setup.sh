@@ -260,8 +260,55 @@ setup_rbenv() {
   fi
 }
 
+setup_cleanup_ubuntu() {
+  for dir in Desktop Documents Downloads Music Pictures Public Templates Videos; do
+    [ -d $HOME/$dir ] && rmdir $HOME/$dir
+  done
+  rm -f $HOME/.examples.desktop
+}
+
+setup_add_git_ppa() {
+  ls /etc/apt/sources.list.d/git-core-ppa-*.list &> /dev/null ||
+    sudo add-apt-repository ppa:git-core/ppa
+}
+
+setup_packages_ubuntu() {
+  sudo apt-get update
+
+  sudo apt-get install zsh git xmonad xmobar vim-gtk rxvt-unicode-256color \
+    fonts-droid suckless-tools htop xsel feh curl gawk
+}
+
+setup_locale_ubuntu() {
+  sudo diff -q etc/default/locale /etc/default/locale ||
+    sudo cp etc/default/locale /etc/default/locale
+}
+
+setup_slock() {
+  [ -f "/usr/local/bin/slock" ] && return
+
+  echo "Installing slock-1.1"
+  tmpdir="$(mktemp -d)"
+  pushd "$tmpdir" &> /dev/null
+    wget http://dl.suckless.org/tools/slock-1.1.tar.gz
+    tar xzvf slock-1.1.tar.gz
+    pushd slock-1.1 &> /dev/null
+      make clean all
+      sudo make install
+    popd &> /dev/null
+  popd &> /dev/null
+  rm -r "$tmpdir"
+}
+
 if [ $# -eq 0 ]; then
-  set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+  if which lsb_release && lsb_release -i | grep Ubuntu; then
+    echo "Detected ubuntu"
+    set cleanup_ubuntu add_git_ppa packages_ubuntu locale_ubuntu slock \
+      commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+  else
+    echo "Detected non-ubuntu"
+    set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+  fi
 fi
 
 for thing; do
