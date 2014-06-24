@@ -110,7 +110,7 @@ function cd {
   [ "${PWD#$IMO_HOME}" != "$PWD" -o "${PWD#$IMO_REPOS/}" = "$PWD" ] && return
   # blacklist non-imo.im repos
   repo=$(echo $PWD | cut -d/ -f$(($dir_depth + 1)))
-  echo "$repo" | grep -Eq "deb_packages|imoxml|sleekxmpp|puppet|design" && return
+  echo "$repo" | grep -Eq "deb_packages|imoxml|sleekxmpp|puppet|design|web" && return
   # [ "${PWD#$IMO_REPOS/deb_packages}" != "$PWD" ] && return
   # we are inside another home
   ih $(echo ${PWD#$IMO_REPOS/} | cut -d/ -f 1) silent
