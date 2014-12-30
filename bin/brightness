@@ -1,0 +1,49 @@
+#!/bin/bash
+
+ctrl_dir="/sys/class/backlight/intel_backlight"
+ctrl_file="$ctrl_dir/brightness"
+max_file="$ctrl_dir/max_brightness"
+
+get_raw() {
+  cat $ctrl_file
+}
+
+get_max() {
+  cat $max_file
+}
+
+get_percent() {
+  current=$(get_raw)
+  max=$(get_max)
+  echo $((current * 100 / max))
+}
+
+set_raw() {
+  echo "$1" | sudo tee "$ctrl_file" > /dev/null
+}
+
+set_percent() {
+  max=$(get_max)
+  raw=$(($1 * max / 100))
+  set_raw $raw
+}
+
+if [ "$1" = '+' ]; then
+  current=$(get_percent)
+  new=$((current + 5))
+  if [ $new -gt 100 ]; then
+    new=100
+  fi
+  set_percent $new
+elif [ "$1" = '-' ]; then
+  current=$(get_percent)
+  new=$((current - 5))
+  if [ "$new" -lt 0 ]; then
+    new=0
+  fi
+  set_percent $new
+elif [ $# -eq 1 ]; then
+  set_raw $1
+else
+  get_percent
+fi

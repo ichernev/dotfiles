@@ -337,6 +337,9 @@ main = do
         -- change volume
           ("M-C-r", spawn "vol_ctl -")
         , ("M-C-t", spawn "vol_ctl +")
+        -- change brightness
+        , ("M-C-f", spawn "brightness -")
+        , ("M-C-g", spawn "brightness +")
         -- cycle through workspaces
         , ("M-<Left>", prevWS)
         , ("M-<Right>", nextWS)
