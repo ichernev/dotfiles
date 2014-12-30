@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+
+repo="moment/moment"
+
+if [ $# -lt 1 ]; then
+    echo "Provide PR number" >&2
+    exit 1
+fi
+
+pr=$1
+shift
+
+after_rebase=0
+just_rebase=0
+if [ "$1" = "--cont" ]; then
+    after_rebase=1
+    shift
+fi
+
+if [ "$1" = "--rebase" ]; then
+    just_rebase=1
+    shift
+fi
+
+data_file="/tmp/${pr}.json"
+
+curl -s "https://api.github.com/repos/$repo/pulls/$pr" -o "$data_file"
+
+title="$(jshon -e title -u -F $data_file)"
+remote_repo="$(jshon -e head -e repo -e html_url -u -F $data_file)"
+remote_branch="$(jshon -e head -e ref -u -F $data_file)"
+remote_user_branch="$(jshon -e head -e label -u -F $data_file)"
+
+echo "title is $title"
+echo "repo is $remote_repo"
+echo "branch is $remote_branch"
+echo "user/branch is $remote_user_branch"
+echo
+
+if [ "$(git symbolic-ref --short HEAD)" != 'develop' ]; then
+    echo "Use branch develop. Refusing to continue" >&2
+    exit 1
+fi
+
+if [ $after_rebase = 0 ]; then
+    if git show-ref --verify --quiet refs/heads/pr; then
+        echo "branch pr exists. delete first" >&2
+        exit 1
+    fi
+    set -x
+    git fetch "$remote_repo" "$remote_branch"
+    git checkout -b pr FETCH_HEAD
+    git rebase develop
+else
+    set -x
+fi
+
+if [ "$just_rebase" = 1 ]; then
+    exit
+fi
+
+git checkout develop
+git merge pr --no-ff -m "Merge pull request #${pr} from $remote_user_branch
+
+$title"
+git branch -D pr
+
+echo "* [$pr] $title" >> $HOME/tmp/moment-nxt.md
+git rev-parse HEAD
