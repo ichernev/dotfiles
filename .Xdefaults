@@ -25,8 +25,9 @@ URxvt.keysym.C-0x2d: command:\033]50;xft:Monospace-9\007
 ! URxvt.urlLauncher:      /usr/bin/chromium
 ! URxvt.matcher.button:   1
 
-XTerm.renderFont: true
-XTerm.faceName: monospace
+XTerm*renderFont: true
+XTerm*faceName: xft:Droid Sans Mono-10
+XTerm*background: #000000
 
 ! Konsole dark pastel theme
 ! *color0:  #3f3f3f
