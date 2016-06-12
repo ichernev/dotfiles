@@ -4,9 +4,24 @@ set -e
 set -o pipefail
 
 repo="moment/moment"
+upstream_remote="upstream"
+main_branch="develop"
+tmp_pr_branch="pr"
+changeset_file=$HOME/tmp/moment-nxt.md
+tmp_dir="/tmp"
 
 if [ $# -lt 1 ]; then
-    echo "Provide PR number" >&2
+    {
+        echo "$0 PR [--cont|--rebase|--fetch]"
+        echo
+        echo "    --fetch  only fetch the PRs code into branch $tmp_pr_branch"
+        echo "    --rebase only fetch the PRs code and rebase it on top of $main_branch"
+        echo "    --cont   merge branch $tmp_pr_branch into $main_branch, run tests and push"
+        echo
+        echo "  You can use --fetch to do a manual rebase in case the automatic one fails"
+        echo "  You can use --rebase to add code to an existing PR just before you merge it in."
+        echo "  You can use --cont after fixing rebase conflicts"
+    } >&2
     exit 1
 fi
 
@@ -15,6 +30,7 @@ shift
 
 after_rebase=0
 just_rebase=0
+skip_rebase=0
 if [ "$1" = "--cont" ]; then
     after_rebase=1
     shift
@@ -25,11 +41,17 @@ if [ "$1" = "--rebase" ]; then
     shift
 fi
 
-data_file="/tmp/${pr}.json"
+if [ "$1" = "--fetch" ]; then
+    just_rebase=1
+    skip_rebase=1
+fi
+
+data_file="$tmp_dir/${pr}.json"
 
 curl -s "https://api.github.com/repos/$repo/pulls/$pr" -o "$data_file"
 
 title="$(jshon -e title -u -F $data_file)"
+state="$(jshon -e state -u -F $data_file)"
 remote_repo="$(jshon -e head -e repo -e html_url -u -F $data_file)"
 remote_branch="$(jshon -e head -e ref -u -F $data_file)"
 remote_user_branch="$(jshon -e head -e label -u -F $data_file)"
@@ -40,33 +62,59 @@ echo "branch is $remote_branch"
 echo "user/branch is $remote_user_branch"
 echo
 
-if [ "$(git symbolic-ref --short HEAD)" != 'develop' ]; then
-    echo "Use branch develop. Refusing to continue" >&2
+if [ "$state" != 'open' ]; then
+    echo "PR $pr state is $state (not open)" >&2
+    exit 1
+fi
+
+if [ $after_rebase = 1 -a $(git symbolic-ref --short HEAD) = "$tmp_pr_branch" ]; then
+    echo "Checking out $main_branch for YOUR convenience" >&2
+    git checkout $main_branch
+fi
+
+
+if [ "$(git symbolic-ref --short HEAD)" != "$main_branch" ]; then
+    echo "Use branch $main_branch. Refusing to continue" >&2
     exit 1
 fi
 
 if [ $after_rebase = 0 ]; then
-    if git show-ref --verify --quiet refs/heads/pr; then
-        echo "branch pr exists. delete first" >&2
+    if git show-ref --verify --quiet refs/heads/$tmp_pr_branch; then
+        echo "branch $tmp_pr_branch exists. delete it first" >&2
         exit 1
     fi
-    set -x
     git fetch "$remote_repo" "$remote_branch"
     git checkout -b pr FETCH_HEAD
-    git rebase develop
-else
-    set -x
+    [ $skip_rebase = 0 ] && git rebase $main_branch
 fi
 
 if [ "$just_rebase" = 1 ]; then
     exit
 fi
 
-git checkout develop
-git merge pr --no-ff -m "Merge pull request #${pr} from $remote_user_branch
+git checkout $main_branch
+git merge $tmp_pr_branch --no-ff -m "Merge pull request #${pr} from $remote_user_branch
 
 $title"
-git branch -D pr
+git branch -D $tmp_pr_branch
 
-echo "* [$pr] $title" >> $HOME/tmp/moment-nxt.md
-git rev-parse HEAD
+if [ -n "$changeset_file" ]; then
+    echo "* [$pr] $title" >> $changeset_file
+fi
+
+grunt
+
+git push $upstream_remote
+
+if [ -n "$GITHUB_TOKEN" ]; then
+    msg="Merged in $(git rev-parse HEAD)"
+    curl  -H "Authorization: token $GITHUB_TOKEN"  \
+        -H "Content-Type: application/json" \
+        -X POST -d "{\"body\":\"$msg\"}" "https://api.github.com/repos/$repo/issues/$pr/comments"
+
+    curl -H "Authorization: token $GITHUB_TOKEN"  \
+        -H "Content-Type: application/json" \
+        -X PATCH -d '{"state":"closed"}' "https://api.github.com/repos/$repo/issues/$pr"
+else
+    echo "export \$GITHUB_TOKEN if you want to comment and close the PR automatically"
+fi
