@@ -101,6 +101,7 @@ done
 alias cal='cal -m'
 alias feh='feh -ZFd'
 alias sc='sudo systemctl'
+alias sj='sudo journalctl'
 alias poweroff='sc poweroff'
 alias reboot='sc reboot'
 

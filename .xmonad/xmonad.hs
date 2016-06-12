@@ -13,11 +13,12 @@ import XMonad
 import XMonad.Actions.CycleWS(nextWS, prevWS)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ICCCMFocus
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Layout.Grid
 import XMonad.Layout.NoBorders(smartBorders)
 import XMonad.Layout.PerWorkspace
-import XMonad.Layout.Grid
 import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.Scratchpad
@@ -257,6 +258,7 @@ myManageHook = composeAll
     , className =? "Chromium"         --> doShift "web"
     , className =? "Google-chrome"    --> doShift "web"
     , className =? "Spotify"          --> doShift "spotify"
+    , className =? "Cssh"             --> doFloat
     ]
 
 ------------------------------------------------------------------------
@@ -327,7 +329,8 @@ main = do
         , layoutHook = smartBorders $ avoidStruts
                      $ myLayout -- layoutHook defaultConfig
         --              -- $ onWorkspace "chat" Full
-        , logHook = dynamicLogWithPP $ xmobarPP
+        , logHook = takeTopFocus
+                    <+> dynamicLogWithPP xmobarPP
                        { ppOutput = hPutStrLn xmproc
                        , ppTitle = xmobarColor "green" "" -- . shorten 50
                        }
