@@ -9,14 +9,18 @@
 
 import Data.Monoid
 import System.Exit
+import Control.Monad
 import XMonad
+import XMonad.Core(getAtom, withWindowSet)
 import XMonad.Actions.CycleWS(nextWS, prevWS)
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
+import XMonad.Hooks.SetWMName
 import XMonad.Layout.NoBorders(smartBorders)
 import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Grid
 import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.Scratchpad
@@ -213,7 +217,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- The available layouts.  Note that each layout is separated by |||,
 -- which denotes layout choice.
 --
-myLayout = Full ||| tiled ||| Mirror tiled
+myLayout = Full ||| tiled ||| Mirror tiled ||| Grid
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -249,13 +253,16 @@ myManageHook = composeAll
       isFullscreen --> doFullFloat
     , className =? "Gimp"             --> doFloat
     , className =? "stalonetray"      --> doIgnore
+    , className =? "sun-awt-X11-XDialogPeer" --> doIgnore
     , resource  =? "desktop_window"   --> doIgnore
     , resource  =? "kdesktop"         --> doIgnore
+    , resource  =? "jetbrains-idea"   --> doIgnore
     -- , className =? "Firefox"          --> doShift "mail"
     , className =? "Chromium-browser" --> doShift "mail"
     , className =? "Chromium"         --> doShift "web"
     , className =? "Google-chrome"    --> doShift "web"
     , className =? "Spotify"          --> doShift "spotify"
+    , className =? "Cssh"             --> doFloat
     ]
 
 ------------------------------------------------------------------------
@@ -289,6 +296,31 @@ manageScratchPad = scratchpadManageHook (W.RationalRect l t w h)
     t = (1 - h) / 2     -- distance from top edge, 20%
     l = (1 - w) / 2    -- distance from left edge, 5%
 
+
+
+
+
+-- Send WM_TAKE_FOCUS
+takeTopFocus = withWindowSet $ maybe (setFocusX =<< asks theRoot) takeFocusX . W.peek
+
+atom_WM_TAKE_FOCUS      = getAtom "WM_TAKE_FOCUS"
+takeFocusX w = withWindowSet $ \ws -> do
+    dpy <- asks display
+    wmtakef <- atom_WM_TAKE_FOCUS
+    wmprot <- atom_WM_PROTOCOLS
+
+    protocols <- io $ getWMProtocols dpy w
+    when (wmtakef `elem` protocols) $ do
+        io $ allocaXEvent $ \ev -> do
+            setEventType ev clientMessage
+            setClientMessageEvent ev w wmprot 32 wmtakef currentTime
+            sendEvent dpy w False noEventMask ev
+
+xmobarLogger xmproc = dynamicLogWithPP xmobarPP
+                               { ppOutput = hPutStrLn xmproc
+                               , ppTitle = xmobarColor "green" "" -- . shorten 50
+                               }
+
 ------------------------------------------------------------------------
 -- Startup hook
 
@@ -319,6 +351,7 @@ main = do
         , modMask = myModMask
         , normalBorderColor = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
+        , startupHook = setWMName "LG3D"
         , manageHook = myManageHook <+> manageDocks
                                     <+> manageScratchPad
                                     <+> manageHook defaultConfig
@@ -326,10 +359,7 @@ main = do
         , layoutHook = smartBorders $ avoidStruts
                      $ myLayout -- layoutHook defaultConfig
                      -- $ onWorkspace "chat" Full
-        , logHook = dynamicLogWithPP $ xmobarPP
-                       { ppOutput = hPutStrLn xmproc
-                       , ppTitle = xmobarColor "green" "" -- . shorten 50
-                       }
+        , logHook = takeTopFocus <+> xmobarLogger xmproc
         , handleEventHook = PWKbdLayout.perWindowKbdLayout <+> fullscreenEventHook
         } `additionalKeysP`
         [

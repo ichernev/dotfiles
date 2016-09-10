@@ -59,7 +59,7 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='|$(imo_repo)| [%F{cyan}desk%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]$(maybe_chroot)%% '
+export PROMPT='%F{yellow}%*%f |$(imo_repo)| [%F{cyan}desk%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)]$(maybe_chroot)%% '
 
 maybe_chroot() {
   if [ -f /etc/debian_chroot ]; then
@@ -108,9 +108,9 @@ function cd {
   IMO_REPOS=$(dirname $IMO_HOME)
   # we are inside imo home or we're not in a repo inside IMO_REPOS
   [ "${PWD#$IMO_HOME}" != "$PWD" -o "${PWD#$IMO_REPOS/}" = "$PWD" ] && return
-  # blacklist non-imo.im repos
+  # whitelist imo.im repos
   repo=$(echo $PWD | cut -d/ -f$(($dir_depth + 1)))
-  echo "$repo" | grep -Eq "deb_packages|imoxml|sleekxmpp|puppet|design|web" && return
+  echo "$repo" | grep -Eq "imo.im|working1" || return
   # [ "${PWD#$IMO_REPOS/deb_packages}" != "$PWD" ] && return
   # we are inside another home
   ih $(echo ${PWD#$IMO_REPOS/} | cut -d/ -f 1) silent
@@ -128,7 +128,8 @@ alias cdf='colordiff | less -R'
 for cmd in poweroff reboot; do
   alias "${cmd}X"="sudo $cmd"
 done
-alias cal='cal -m'
+alias service="sudo service"
+alias cal='ncal -MC'
 alias feh='feh -ZFd'
 
 # http://stackoverflow.com/questions/11025063/how-do-i-get-zsh-to-display-the-current-directory-in-the-terminal-frame

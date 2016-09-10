@@ -163,6 +163,10 @@ setup_scripts() {
   popd # $HOME/bin
 }
 
+setup_hg_ignore() {
+  safe_link .hgignore-global
+}
+
 setup_rc() {
   # rc.conf
   if [ -e /etc/rc.conf ]; then
@@ -304,10 +308,10 @@ if [ $# -eq 0 ]; then
   if which lsb_release && lsb_release -i | grep Ubuntu; then
     echo "Detected ubuntu"
     set cleanup_ubuntu add_git_ppa packages_ubuntu locale_ubuntu slock \
-      commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+      commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv hg_ignore
   else
     echo "Detected non-ubuntu"
-    set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+    set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv hg_ignore
   fi
 fi
 

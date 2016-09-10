@@ -21,6 +21,7 @@ exec grep -EInrs "$@" $color \
     --exclude-dir='.git' \
     --exclude-dir='.svn' \
     --exclude='tags' \
+    --exclude='langid.py' \
     --exclude='cscope.out' \
     --exclude-dir='.hg' \
     --exclude-dir='build' \

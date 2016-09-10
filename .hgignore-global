@@ -1,0 +1,13 @@
+syntax: glob
+
+.vimrc-local
+scripts/maintenance/local
+imo/next_level/level_db
+tags
+imo/java/src/main/java/im/imo/services/base/IskrenMain.java
+x.py
+x.sh
+y.py
+y.sh
+
+tornado-server

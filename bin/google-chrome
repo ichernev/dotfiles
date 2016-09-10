@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# set --proxy-pac-url="file:///home/iskren/proxy.pac" --host-resolver-rules="MAP * 0.0.0.0 , EXCLUDE myproxy" "$@"
+
+set - --proxy-pac-url="file:///var/lib/imo_data/proxy.pac" "$@"
 [[ -x /usr/bin/chromium ]] && exec /usr/bin/chromium "$@"
 [[ -x /usr/bin/google-chrome ]] && exec /usr/bin/google-chrome "$@"
 
