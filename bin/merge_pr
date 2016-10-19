@@ -3,11 +3,13 @@
 set -e
 set -o pipefail
 
+EDIT_TITLE=1
+
 repo="moment/moment"
 upstream_remote="upstream"
 main_branch="develop"
 tmp_pr_branch="pr"
-changeset_file=$HOME/tmp/moment-nxt.md
+changeset_file=$HOME/tmp/moment/moment-nxt.md
 tmp_dir="/tmp"
 
 if [ $# -lt 1 ]; then
@@ -92,6 +94,19 @@ if [ "$just_rebase" = 1 ]; then
     exit
 fi
 
+if [ $EDIT_TITLE = 1 ]; then
+    title_edit=$(mktemp /tmp/edit-title-$pr.XXXXXX)
+    echo "$title" > $title_edit
+    title_edit_time="$(stat -c '%y' $title_edit)"
+    vim $title_edit
+    if [ $? -ne 0 -o "$title_edit_time" = "$(stat -c '%y' $title_edit)" ]; then
+        echo "Aborting merge. Save the title file to continue" >&2
+        exit 1
+    fi
+
+    title="$(cat $title_edit)"
+fi
+
 git checkout $main_branch
 git merge $tmp_pr_branch --no-ff -m "Merge pull request #${pr} from $remote_user_branch
 
@@ -114,7 +129,7 @@ if [ -n "$GITHUB_TOKEN" ]; then
 
     curl -H "Authorization: token $GITHUB_TOKEN"  \
         -H "Content-Type: application/json" \
-        -X PATCH -d '{"state":"closed"}' "https://api.github.com/repos/$repo/issues/$pr"
+        -X PATCH -d "{\"state\":\"closed\", \"title\": \"$title\"}" "https://api.github.com/repos/$repo/issues/$pr"
 else
     echo "export \$GITHUB_TOKEN if you want to comment and close the PR automatically"
 fi
