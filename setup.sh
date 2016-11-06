@@ -155,7 +155,11 @@ setup_scripts() {
 
   pushd "$HOME/bin"
 
-  for script in $(ls "$HOME/.dotfiles/bin/"); do
+  ALL=$(ls "$HOME/.dotfiles/bin/")
+  if [ $(uname) = Darwin ]; then
+    ALL="xgrep"
+  fi
+  for script in $ALL; do
     script_name="$(basename $script)"
     safe_link "bin/$script_name" "$script_name"
   done
@@ -300,14 +304,25 @@ setup_slock() {
   rm -r "$tmpdir"
 }
 
+setup_merge_pr() {
+  [ -f $HOME/bin/merge_pr ] && return
+
+  pushd $HOME/bin &> /dev/null
+    curl https://gist.githubusercontent.com/ichernev/18d63aa297fc471622be/raw -o merge_pr
+    chmod +x merge_pr
+  popd &> /dev/null
+}
+
 if [ $# -eq 0 ]; then
   if which lsb_release && lsb_release -i | grep Ubuntu; then
     echo "Detected ubuntu"
     set cleanup_ubuntu add_git_ppa packages_ubuntu locale_ubuntu slock \
-      commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
-  else
-    echo "Detected non-ubuntu"
-    set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv
+      commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv merge_pr
+  elif [ $(uname) = Linux ]; then
+    echo "Detected non-ubuntu Linux"
+    set commands rc X sshkeys vim git zsh xmonad scripts nenv rbenv merge_pr
+  elif [ $(uname) = Darwin ]; then
+    set vim git scripts nenv merge_pr
   fi
 fi
 
