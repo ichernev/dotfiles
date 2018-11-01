@@ -16,3 +16,7 @@ if [ -d "$ANDROID_BUNDLE" ]; then
   export PATH="$PATH:$ANDROID_BUNDLE/tools:$ANDROID_BUNDLE/platform-tools"
 fi
 unset ANDROID_BUNDLE
+
+if [ -d $HOME/bin ]; then
+  export PATH="$HOME/bin:$PATH"
+fi

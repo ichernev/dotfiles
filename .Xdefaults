@@ -9,7 +9,7 @@
 *scrollTtyKeypress: true
 
 ! normal terminal
-urxvt*font: xft:Droid Sans Mono-11
+urxvt*font: xft:Droid Sans Mono-12
 urxvt*background: #000000
 
 ! scratchpad
@@ -17,10 +17,10 @@ scratchpad*font: xft:Monospace-10
 scratchpad*background: #111111
 
 ! C-= and C--
-URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-12\007
+URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-13\007
 ! URxvt.keysym.C-0x3d: command:\033]50;xft:Oxygen Mono-12:hintstyle=hintnone:antialias=1\007
-URxvt.keysym.C-0:    command:\033]50;xft:Droid Sans Mono-11\007
-URxvt.keysym.C-0x2d: command:\033]50;xft:Monospace-9\007
+URxvt.keysym.C-0:    command:\033]50;xft:Droid Sans Mono-12\007
+URxvt.keysym.C-0x2d: command:\033]50;xft:Droid Sans Mono-8\007
 ! URxvt.perl-ext-common:  default,matcher
 ! URxvt.urlLauncher:      /usr/bin/chromium
 ! URxvt.matcher.button:   1

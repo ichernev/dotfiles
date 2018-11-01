@@ -1,6 +1,6 @@
 -- vim: set filetype=haskell :
 Config { -- font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
-         font = "xft:DejaVu Sans Mono-11"
+         font = "xft:Droid Sans Mono-12"
        , bgColor = "black"
        , position = Static { xpos = 0, ypos = 0, width = 1500, height = 22 }
        , lowerOnStart = False
