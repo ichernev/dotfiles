@@ -9,7 +9,7 @@
 *scrollTtyKeypress: true
 
 ! normal terminal
-urxvt*font: xft:Droid Sans Mono-12
+urxvt*font: xft:DejaVu Sans Mono-12
 urxvt*background: #000000
 
 ! scratchpad
