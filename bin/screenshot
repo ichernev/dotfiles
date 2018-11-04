@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec import -window root "/tmp/snap_$(date +"%Y-%m-%d_%T").png"
+exec import -window root "$HOME/Desktop/full_$(date +"%Y-%m-%d_%T").png"
