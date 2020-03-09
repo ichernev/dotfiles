@@ -27,6 +27,24 @@ spotify_query()
   qdbus org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get org.mpris.MediaPlayer2.Player PlaybackStatus
 }
 
+ensure_running()
+{
+  started=0
+  tries=0
+  while spotify_query 2>&1 | grep -q 'Cannot find'; do
+    tries=$((tries + 1))
+    if [ $tries -gt 10 ]; then
+      break
+    fi
+    if [ $started = 0 ]; then
+      spotify >/dev/null 2>/dev/null &
+      started=1
+    fi
+
+    sleep 0.2
+  done
+}
+
 quit_message()
 {
   echo "Usage: `basename $0` {play|pause|playpause|next|previous|stop|playstatus|<spotify URI>}"
@@ -55,9 +73,11 @@ case "$1" in
     spotify_cmd Pause
     ;;
   playpause)
+    ensure_running
     spotify_cmd PlayPause
     ;;
   next)
+    ensure_running
     spotify_cmd Next
     ;;
   previous)
