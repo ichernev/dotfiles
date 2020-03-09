@@ -1,19 +1,39 @@
 #!/bin/bash
 
+bat_percent() {
+    inp="$1"
+    perc=${inp%\%*}
+    typ=${inp#*% }
+    if [ $typ == "BAT" ]; then
+        echo $perc
+    else
+        echo 100
+    fi
+}
+
+CUTOFF=5
+cur_state=$(cat /tmp/bat_state 2>/dev/null)
+
 acpi | gawk '
-BEGIN { FS = ", " } 
-{ 
+BEGIN { FS = ", " }
+{
   percent = substr($2, 1, index($2, "%") - 1) + 0;
   if (percent >= 99) percent = ""; else percent = percent "% ";
-  bat_state = substr($1, index($1, ":") + 2); 
+  bat_state = substr($1, index($1, ":") + 2);
   bat_state = (bat_state == "Discharging" ? "BAT" : "AC");
   printf("%s%s\n", percent, bat_state)
 }' > /tmp/bat_state
+new_state=$(cat /tmp/bat_state 2>/dev/null)
 
 if [ $(cat /tmp/bat_state | wc -c) == 0 ]; then
   echo "AC"
 else
   cat /tmp/bat_state
+fi
+
+if test $(bat_percent "$cur_state") -ge $CUTOFF && test $(bat_percent "$new_state") -lt $CUTOFF; then
+    paplay /usr/share/sounds/freedesktop/stereo/service-logout.oga
+    lock_screen
 fi
 
 # case "$(eee_ctl status fsb)" in
