@@ -52,6 +52,10 @@ bindkey "\e[2~" overwrite-mode    # insert
 # color names
 autoload -U colors; colors
 
+autoload bashcompinit
+bashcompinit
+eval "$(register-python-argcomplete pmbootstrap)"
+
 # prompt
 autoload -Uz promptinit; promptinit
 fpath=(~/.zdir/functions $fpath)
@@ -60,7 +64,7 @@ setopt PROMPT_SUBST                           # enable variable/function substit
 add-zsh-hook precmd update_current_git_vars   # update variables needed for prompt before it is drawn
 
 # PS1="[%{$fg[green]%}%n%{$reset_color%} %{$fg[yellow]%}%c%{$reset_color%}$(prompt_git_info)]%% "
-export PROMPT='[%F{magenta}beast%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)%F{white}$(screen_title)%f]%% '
+export PROMPT='[%F{magenta}beast%f %F{yellow}%1~%f$(prompt_git_info)$(prompt_pkg_update)$(prompt_restart)%F{white}$(screen_title)%f]%% '
 
 last_pkg_update() {
   if [ -f "/var/log/pacman.log" ]; then
@@ -78,6 +82,16 @@ prompt_pkg_update() {
   secs_since_upd=$(($(date '+%s') - $(date "-d$(last_pkg_update)" '+%s')))
   if [ $secs_since_upd -gt $((2 * 7 * 24 * 60 * 60)) ]; then
     echo " %F{red}update%f"
+  else
+    echo ""
+  fi
+}
+
+prompt_restart() {
+  running="$(uname -r | sed -e 's/-arch/.arch/')"
+  installed="$(pacman -Q linux | gawk ' { print $2 } ')"
+  if [ "${running}" != "${installed}" ]; then
+    echo " %F{red}res%f"
   else
     echo ""
   fi
