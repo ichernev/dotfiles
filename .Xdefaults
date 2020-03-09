@@ -1,6 +1,7 @@
 ! Common terminal stuff
 *scrollBar: 0
 *foreground: gray
+# *foreground: black
 *color4: #5C5CFF
 *color12: #5C5CFF
 *saveLines: 1000000
@@ -11,10 +12,14 @@
 ! normal terminal
 urxvt*font: xft:DejaVu Sans Mono-12
 urxvt*background: #000000
+# urxvt*font: xft:DejaVu Sans Mono-20
+# urxvt*background: #FFFFFF
 
 ! scratchpad
 scratchpad*font: xft:Monospace-10
 scratchpad*background: #111111
+# scratchpad*font: xft:Monospace-25
+# scratchpad*background: #FFFFFF
 
 ! C-= and C--
 URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-13\007
