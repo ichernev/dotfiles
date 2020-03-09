@@ -9,6 +9,7 @@ import XMonad.Hooks.ManageDocks(avoidStruts,ToggleStruts(..),docksStartupHook,do
 import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Layout.Fullscreen(fullscreenEventHook)
 import XMonad.Util.Scratchpad(scratchpadSpawnActionTerminal,scratchpadManageHook)
+import XMonad.ManageHook(doFloat,doShift,doIgnore)
 import qualified XMonad.Hooks.PerWindowKbdLayout as PWKbdLayout
 import qualified XMonad.StackSet as W
 
@@ -30,7 +31,7 @@ myManageHook = composeAll
     [
       className =? "MPlayer"          --> doFloat
     -- , isFullscreen                    --> doFullFloat
-    , className =? "Gimp"             --> doFloat
+    -- , className =? "Gimp"             --> doFloat
     , className =? "stalonetray"      --> doIgnore
     , className =? "trayer"           --> doIgnore
     , resource  =? "desktop_window"   --> doIgnore
@@ -39,12 +40,13 @@ myManageHook = composeAll
     -- , className =? "Chromium-browser" --> doShift "mail"
     -- , className =? "Chromium"         --> doShift "web"
     -- , className =? "Google-chrome"    --> doShift "web"
-    -- , className =? "Spotify"          --> doShift "spotify"
+    , className =? "spotify"          --> doShift "spotify"
     , className =? "Cssh"             --> doFloat
     ]
 
 main = do
     xmproc <- spawnPipe "xmobar"
+    -- autostart <- spawnPipe "sleep 5 && dex -a -s $HOME/.config/autostart"
     xmonad $ ewmh defaultConfig
         {
           modMask = mod4Mask
@@ -60,6 +62,7 @@ main = do
                             <+> PWKbdLayout.perWindowKbdLayout
                             <+> docksEventHook
                             <+> fullscreenEventHook
+        , workspaces = map show [1..7] ++ ["spotify", "junk"]
         , startupHook = startupHook defaultConfig <+> docksStartupHook
         } `additionalKeysP`
         [
@@ -72,12 +75,16 @@ main = do
         , ("M-C-r", spawn "vol_ctl -")
         , ("M-C-t", spawn "vol_ctl +")
         , ("M-c", spawn "xcopy")
-        , ("M-v", spawn "xselectcb")
+        , ("M-S-v", spawn "xpaste -p")
+        , ("M-v", spawn "xpaste -b")
         , ("M-S-l", spawn "slock")
         -- scratchpad
         , ("M-`", scratchpadSpawnActionTerminal myTerminal)
         -- screenshot (full screen)
-        , ("M-S-s", spawn "screenshot")
+        , ("C-S-3", spawn "screenshot")
         -- screenshot (part of screen)
-        , ("M-S-p", spawn "cropscreen")
+        , ("C-S-4", spawn "cropscreen")
+        -- spotify
+        , ("M-S-p", spawn "spotctl playpause")
+        , ("M-S-n", spawn "spotctl next")
         ]
