@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # TODO: Handle multiple sinks
+sinks="$(pacmd dump | grep set-sink-volume | gawk ' { print $2 } ')"
 sink_vol=($(pacmd dump | grep set-sink-volume | grep analog | head -n1))
-sink=${sink_vol[1]}
 raw_vol=$((${sink_vol[2]}))
 max_vol=$((0x10000))
 
@@ -17,7 +17,10 @@ get_vol() {
 
 set_vol() {
   percent="$1"
-  pactl set-sink-volume "$sink" "$(round_expr "$percent * $max_vol / 100")"
+  new_vol="$(round_expr "$percent * $max_vol / 100")"
+  for sink in $sinks; do
+    pactl set-sink-volume "$sink" "$new_vol"
+  done
 }
 
 # round_expr "19660 * 100 / 65536"
