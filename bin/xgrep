@@ -1,17 +1,40 @@
 #!/bin/bash
 
-got_location=0
-for opt in "$@"; do
-  [ -d "$opt" -o -f "$opt" ] && got_location=1
-done
 if [ -t 1 ]; then
     # ttys deserve some spice
     color="--color"
 fi
+got_location=0
+declare -a nargs
+nargs=()
+for opt in "$@"; do
+  if [ -d "$opt" -o -f "$opt" ]; then
+    got_location=1
+  fi
+  nopt=
+  case "$opt" in
+    ddb)
+      nopt="Documentation/devicetree/bindings"
+      got_location=1
+      ;;
+    adts)
+      nopt="arch/arm/boot/dts"
+      got_location=1
+      ;;
+    a64dts)
+      nopt="arch/arm64/boot/dts"
+      got_location=1
+      ;;
+    *)
+      nopt="$opt"
+      ;;
+  esac
+  nargs+=("$nopt")
+done
 if [ $got_location -eq 0 ]; then
-  # adding currect dir
-  set -- "$@" .
+  nargs+=(".")
 fi
+set -- "${nargs[@]}"
 
 # extended regex
 # ignore binary files
@@ -25,4 +48,5 @@ exec grep -EInrs "$@" $color \
     --exclude-dir='.hg' \
     --exclude-dir='build' \
     --exclude-dir='node_modules' \
-    --exclude-dir='bower_components'
+    --exclude-dir='bower_components' \
+    --exclude-dir='.output*'

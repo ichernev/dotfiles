@@ -1,5 +1,18 @@
+#!/bin/bash
+
 # quick and durty test
 # exec xmonad
+
+# xrandr --auto
+# xrandr --output eDP-1-1 --auto --primary
+# xrandr --setprovideroutputsource modesetting NVIDIA-0
+# xrandr --auto
+
+# echo "EXE XMONAD"
+# logger "EXE XMONAD"
+
+# exec urxvt
+exec xmonad
 
 xset +fp /usr/share/fonts/local
 xset fp rehash

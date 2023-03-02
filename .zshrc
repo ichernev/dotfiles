@@ -32,6 +32,7 @@ setopt HIST_IGNORE_DUPS         # ignore duplicate commands
 # setopt HIST_SAVE_NO_DUPS        # don't save duplicates
 # setopt INC_APPEND_HISTORY       # write after each command
 # setopt SHARE_HISTORY            # share history between sessions
+setopt rmstarsilent               # do not ask for confiromation with rm *
 
 # misc
 setopt AUTO_CD                  # commands that are directories are entered into with cd
@@ -54,7 +55,6 @@ autoload -U colors; colors
 
 autoload bashcompinit
 bashcompinit
-eval "$(register-python-argcomplete pmbootstrap)"
 
 # prompt
 autoload -Uz promptinit; promptinit
@@ -90,6 +90,7 @@ prompt_pkg_update() {
 prompt_restart() {
   running="$(uname -r | sed -e 's/-arch/.arch/')"
   installed="$(pacman -Q linux | gawk ' { print $2 } ')"
+  # installed_lts="$(pacman -Q linux-lts | gawk ' { print $2 } ')"
   if [ "${running}" != "${installed}" ]; then
     echo " %F{red}res%f"
   else
@@ -127,4 +128,4 @@ chpwd_functions=(dir_in_title)
 dir_in_title
 
 # local config
-[ -x ~/.localrc ] && . ~/.localrc
+[ -f ~/.localrc ] && . ~/.localrc

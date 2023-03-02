@@ -6,7 +6,7 @@ set -o pipefail
 EDIT_TITLE=1
 
 repo="moment/moment"
-upstream_remote="upstream"
+upstream_remote="origin"
 main_branch="develop"
 tmp_pr_branch="pr"
 changeset_file=$HOME/tmp/moment/moment-nxt.md
@@ -113,7 +113,7 @@ git merge $tmp_pr_branch --no-ff -m "Merge pull request #${pr} from $remote_user
 $title"
 git branch -D $tmp_pr_branch
 
-if [ -n "$changeset_file" ]; then
+if [ -n "$changeset_file" -a -w "$changeset_file" ]; then
     echo "* [$pr] $title" >> $changeset_file
 fi
 
