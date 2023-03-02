@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-deprecations #-}
 import XMonad
 import XMonad.Actions.CycleWS(nextWS, prevWS)
 import XMonad.Hooks.DynamicLog(dynamicLogWithPP,ppOutput,ppTitle,xmobarPP,xmobarColor)
@@ -10,13 +11,14 @@ import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Layout.Fullscreen(fullscreenEventHook)
 import XMonad.Util.Scratchpad(scratchpadSpawnActionTerminal,scratchpadManageHook)
 import XMonad.ManageHook(doFloat,doShift,doIgnore)
+-- import Xmonad.Hooks.ManageHelpers(doCenterFloat)
 import qualified XMonad.Hooks.PerWindowKbdLayout as PWKbdLayout
 import qualified XMonad.StackSet as W
 
 myTerminal = "urxvt"
 
 -- xFont = "-*-terminus-medium-r-normal-*-18-*-*-*-*-*-iso10646-*"
-xFont = "Droid Sans Mono-12"
+xFont = "Droid Sans Mono-13"
 dmenuRun = "dmenu_run -fn \"" ++ xFont ++ "\" -nb '#000' -nf '#aaa' -sb '#aaa' -sf '#000'"
 
 manageScratchPad :: ManageHook
@@ -42,7 +44,10 @@ myManageHook = composeAll
     -- , className =? "Google-chrome"    --> doShift "web"
     , className =? "spotify"          --> doShift "spotify"
     , className =? "Cssh"             --> doFloat
+    , className =? "nm-openconnect-auth-dialog" --> doShift "spotify"
     ]
+
+extraWs = ["F" ++ (show i) | i <- [1..5]]
 
 main = do
     xmproc <- spawnPipe "xmobar"
@@ -56,16 +61,16 @@ main = do
         , logHook = takeTopFocus
                     <+> dynamicLogWithPP xmobarPP
                        { ppOutput = hPutStrLn xmproc
-                       , ppTitle = xmobarColor "green" "" -- . shorten 50
+                       , ppTitle = xmobarColor "#00dd00" "" -- . shorten 50
                        }
         , handleEventHook = handleEventHook defaultConfig
                             <+> PWKbdLayout.perWindowKbdLayout
                             <+> docksEventHook
                             <+> fullscreenEventHook
-        , workspaces = map show [1..7] ++ ["spotify", "junk"]
+        , workspaces = map show [1..7] ++ ["pcmanfm", "spotify"] ++ extraWs
         , startupHook = startupHook defaultConfig <+> docksStartupHook
         } `additionalKeysP`
-        [
+        ([
           ("M-b", sendMessage ToggleStruts)
         , ("M-p", spawn dmenuRun)
         , ("M-<Left>", prevWS)
@@ -88,3 +93,9 @@ main = do
         , ("M-S-p", spawn "spotctl playpause")
         , ("M-S-n", spawn "spotctl next")
         ]
+        ++ -- additional workspaces
+        (concat [
+          [ ( "M-<" ++ key ++ ">", windows $ W.greedyView key)
+          , ( "M-S-<" ++ key ++ ">" , windows $ W.shift key)
+          ] | key <- extraWs
+        ]))
