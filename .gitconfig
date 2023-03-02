@@ -1,5 +1,5 @@
 [user]
-  email = iskren.chernev@gmail.com
+  email = me@iskren.info
   name = Iskren Chernev
 [alias]
   st = status
@@ -12,6 +12,7 @@
   l = log --graph --decorate --pretty=oneline --abbrev-commit --all
   lz = log --graph --decorate --pretty=oneline --abbrev-commit
   ls = ls-files
+  diff-img = difftool -x 'compare -alpha copy \"$LOCAL\" \"$REMOTE\" png:- | montage -mode concatenate \"$LOCAL\" png:- \"$REMOTE\" png:- | display -title \"$BASE: Local | Diff | Remote\" png:-'
 [color]
   diff = auto
   log = auto
@@ -19,3 +20,30 @@
   branch = auto
 [push]
   default = current
+[pull]
+  ff = only
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+[diff]
+  tool = vimdiff
+[diff "pdfdiff"]
+  command = diffpdf
+[sendemail]
+;; for gmail
+;    smtpServer = /home/iskren/opt/gopath/bin/sendgmail
+;    smtpServerOption = -sender=iskren.chernev@gmail.com
+;; purelymail
+  smtpServer = smtp.purelymail.com
+  smtpServerPort = 465
+  smtpEncryption = ssl
+  smtpUser = me@iskren.info
+  ; smtpPass in git-credential
+[merge]
+  renamelimit = 5000
+[init]
+  defaultBranch = main
+[credential]
+  helper = store --file ~/.git-credentials
