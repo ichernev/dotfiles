@@ -4,7 +4,7 @@ in_path() {
 
 if [ -d "$HOME/.rbenv" ] && ! in_path "$HOME/.rbenv/shims"; then
   export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
-  source "$HOME/.rbenv/completions/rbenv.zsh"
+  # source "$HOME/.rbenv/completions/rbenv.zsh"
 fi
 
 if [ -d "$HOME/.nenv" ] && ! in_path "$HOME/.nenv/shims"; then
