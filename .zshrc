@@ -90,8 +90,11 @@ prompt_pkg_update() {
 prompt_restart() {
   running="$(uname -r | sed -e 's/-arch/.arch/')"
   installed="$(pacman -Q linux | gawk ' { print $2 } ')"
+  # if the version ends with 0 (i.e 6.7.0), pacman has it as 6.7, which does't
+  # match. So add a zero in that case
+  fix_inst=$(echo $installed | python -c 'pcs = input().split("."); print(".".join(pcs if len(pcs) == 4 else pcs[:2]+["0"]+pcs[2:]))');
   # installed_lts="$(pacman -Q linux-lts | gawk ' { print $2 } ')"
-  if [ "${running}" != "${installed}" ]; then
+  if [ "${running}" != "${fix_inst}" ]; then
     echo " %F{red}res%f"
   else
     echo ""
