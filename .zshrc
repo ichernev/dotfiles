@@ -130,5 +130,6 @@ chpwd_functions=(dir_in_title)
 # init
 dir_in_title
 
+export TERM=xterm-color
 # local config
 [ -f ~/.localrc ] && . ~/.localrc
