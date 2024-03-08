@@ -3,7 +3,7 @@ import XMonad
 import XMonad.Actions.CycleWS(nextWS, prevWS)
 import XMonad.Hooks.DynamicLog(dynamicLogWithPP,ppOutput,ppTitle,xmobarPP,xmobarColor)
 import XMonad.Hooks.EwmhDesktops(ewmh)
-import XMonad.Hooks.ICCCMFocus(takeTopFocus)
+-- import XMonad.Hooks.ICCCMFocus(takeTopFocus)
 import XMonad.Util.Run(spawnPipe,hPutStrLn)
 import XMonad.Layout.NoBorders(smartBorders)
 import XMonad.Hooks.ManageDocks(avoidStruts,ToggleStruts(..),docksStartupHook,docksEventHook)
@@ -58,8 +58,7 @@ main = do
         , layoutHook = smartBorders $ avoidStruts $ layoutHook defaultConfig
         , terminal = myTerminal
         , manageHook = myManageHook <+> manageScratchPad <+> manageHook defaultConfig
-        , logHook = takeTopFocus
-                    <+> dynamicLogWithPP xmobarPP
+        , logHook = dynamicLogWithPP xmobarPP
                        { ppOutput = hPutStrLn xmproc
                        , ppTitle = xmobarColor "#00dd00" "" -- . shorten 50
                        }

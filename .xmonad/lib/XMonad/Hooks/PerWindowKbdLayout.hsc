@@ -1,3 +1,4 @@
+{-# LINE 1 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
 {-# LANGUAGE ScopedTypeVariables, ForeignFunctionInterface, MultiParamTypeClasses, DeriveDataTypeable, FlexibleInstances, PatternGuards #-}
 {-# OPTIONS_GHC -fno-warn-unused-imports #-} -- GHC 6.10.4 complains about Foreign.C.Types, see Ticket #3419
 
@@ -22,7 +23,7 @@ module XMonad.Hooks.PerWindowKbdLayout (
                                 perWindowKbdLayout) where
 
 import Foreign
-import Foreign.C.Types (CUChar(..),CUShort(..),CUInt(..),CInt(..))
+import Foreign.C.Types (CUChar,CUShort,CUInt(..),CInt(..))
 
 import Control.Monad (when)
 import Data.List (find)
@@ -34,7 +35,7 @@ import XMonad
 import qualified XMonad.StackSet as W
 import qualified XMonad.Util.ExtensibleState as XS
 
-#include <X11/XKBlib.h>
+
 
 -- $usage
 -- You can use this module with the following in your @~\/.xmonad\/xmonad.hs@:
@@ -63,23 +64,38 @@ data XkbStateRec = XkbStateRec {
 }
 
 instance Storable XkbStateRec where
-    sizeOf _ = (#size XkbStateRec)
+    sizeOf _ = ((18))
+{-# LINE 67 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
     alignment _ = alignment (undefined :: CUShort)
     peek ptr = do
-        r_group <- (#peek XkbStateRec, group) ptr
-        r_locked_group <- (#peek XkbStateRec, locked_group) ptr
-        r_base_group <- (#peek XkbStateRec, base_group) ptr
-        r_latched_group <- (#peek XkbStateRec, latched_group) ptr
-        r_mods <- (#peek XkbStateRec, mods) ptr
-        r_base_mods <- (#peek XkbStateRec, base_mods) ptr
-        r_latched_mods <- (#peek XkbStateRec, latched_mods) ptr
-        r_locked_mods <- (#peek XkbStateRec, locked_mods) ptr
-        r_compat_state <- (#peek XkbStateRec, compat_state) ptr
-        r_grab_mods <- (#peek XkbStateRec, grab_mods) ptr
-        r_compat_grab_mods <- (#peek XkbStateRec, compat_grab_mods) ptr
-        r_lookup_mods <- (#peek XkbStateRec, lookup_mods) ptr
-        r_compat_lookup_mods <- (#peek XkbStateRec, compat_lookup_mods) ptr
-        r_ptr_buttons <- (#peek XkbStateRec, ptr_buttons) ptr
+        r_group <- ((\hsc_ptr -> peekByteOff hsc_ptr 0)) ptr
+{-# LINE 70 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_locked_group <- ((\hsc_ptr -> peekByteOff hsc_ptr 1)) ptr
+{-# LINE 71 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_base_group <- ((\hsc_ptr -> peekByteOff hsc_ptr 2)) ptr
+{-# LINE 72 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_latched_group <- ((\hsc_ptr -> peekByteOff hsc_ptr 4)) ptr
+{-# LINE 73 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 6)) ptr
+{-# LINE 74 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_base_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 7)) ptr
+{-# LINE 75 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_latched_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 8)) ptr
+{-# LINE 76 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_locked_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 9)) ptr
+{-# LINE 77 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_compat_state <- ((\hsc_ptr -> peekByteOff hsc_ptr 10)) ptr
+{-# LINE 78 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_grab_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 11)) ptr
+{-# LINE 79 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_compat_grab_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 12)) ptr
+{-# LINE 80 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_lookup_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 13)) ptr
+{-# LINE 81 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_compat_lookup_mods <- ((\hsc_ptr -> peekByteOff hsc_ptr 14)) ptr
+{-# LINE 82 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
+        r_ptr_buttons <- ((\hsc_ptr -> peekByteOff hsc_ptr 16)) ptr
+{-# LINE 83 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
         return XkbStateRec {
             group = r_group,
             locked_group = r_locked_group,
@@ -96,6 +112,7 @@ instance Storable XkbStateRec where
             compat_lookup_mods = r_compat_lookup_mods,
             ptr_buttons = r_ptr_buttons
         }
+    poke _ = error "poke is unimplemented and should be unused"
 
 foreign import ccall unsafe "X11/XKBlib.h XkbGetState"
     xkbGetState :: Display -> CUInt -> Ptr XkbStateRec -> IO CInt
@@ -106,12 +123,14 @@ type KbdLayout = Int
 
 getKbdLayout :: Display -> IO KbdLayout
 getKbdLayout d = alloca $ \stRecPtr -> do
-    xkbGetState d (#const XkbUseCoreKbd) stRecPtr
+    xkbGetState d (256) stRecPtr
+{-# LINE 111 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
     st <- peek stRecPtr
     return $ fromIntegral (group st)
 
 setKbdLayout :: Display -> KbdLayout -> IO ()
-setKbdLayout d l = xkbLockGroup d (#const XkbUseCoreKbd) $ fromIntegral l
+setKbdLayout d l = xkbLockGroup d (256) $ fromIntegral l
+{-# LINE 116 "XMonad/Hooks/PerWindowKbdLayout.hsc" #-}
 
 data LayoutStorage = LayoutStorage (Maybe Window) (M.Map Window KbdLayout) deriving (Typeable,Read,Show)
 instance ExtensionClass LayoutStorage where initialValue = LayoutStorage Nothing M.empty
@@ -138,3 +157,4 @@ update foc = withDisplay $ \dpy -> do
             io $ whenJust (M.lookup foc wtl) (setKbdLayout dpy)
 
 -- vim:ft=haskell:ts=4:shiftwidth=4:softtabstop=4:expandtab:
+
