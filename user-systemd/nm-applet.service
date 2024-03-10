@@ -1,0 +1,13 @@
+[Unit]
+Description=Network Manager Applet
+BindsTo=trayer.service
+After=trayer.service
+
+[Service]
+Type=simple
+Environment="DISPLAY=:0"
+ExecStart=nm-applet
+
+[Install]
+WantedBy=default.target
+

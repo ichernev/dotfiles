@@ -1,0 +1,13 @@
+[Unit]
+Description=Blueman Applet
+BindsTo=trayer.service
+After=trayer.service
+
+[Service]
+Type=simple
+Environment="DISPLAY=:0"
+ExecStart=blueman-applet
+
+[Install]
+WantedBy=default.target
+
