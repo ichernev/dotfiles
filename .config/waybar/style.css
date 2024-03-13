@@ -1,0 +1,37 @@
+#waybar {
+    background: black;
+}
+
+#clock {
+    font-weight: 700;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+}
+
+#memory {
+    color: white;
+}
+
+#battery {
+    color: white;
+}
+
+#window {
+    font-weight: 700;
+    font-size: 18px;
+    /* line-height: 25px; */
+    color: green;
+    font-family: Monospace;
+}
+#tags button {
+    /* display: none; */
+}
+
+#tags button.occupied {
+    color: red;
+}
+
+#tags button.focused {
+    color: green;
+}
