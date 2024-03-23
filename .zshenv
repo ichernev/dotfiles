@@ -25,4 +25,7 @@ if [ -d $HOME/bin ] && ! in_path "$HOME/bin"; then
   export PATH="$HOME/bin:$PATH"
 fi
 
+# Auto-scale QT Apps to something sane
+export QT_SCALE_FACTOR=1.3
+
 unset in_path
