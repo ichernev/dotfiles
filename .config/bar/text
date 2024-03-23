@@ -7,6 +7,7 @@ import time
 import datetime
 import json
 import traceback
+import re
 from pathlib import Path
 
 read_thread = None
@@ -38,7 +39,7 @@ def brightness() -> str:
     bl_max = (bl / 'max_brightness').read_text().strip()
     bl_crnt = (bl / 'brightness').read_text().strip()
 
-    perc = int(bl_crnt) * 100 // int(bl_crnt)
+    perc = int(bl_crnt) * 100 // int(bl_max)
     return f'{perc}'
 
 def volume() -> str:
@@ -91,6 +92,7 @@ class WriteThread(threading.Thread):
     def run(self):
         while True:
             try:
+                F_RESET = '%{F:0xAAAAAA}'
                 # wait for 1 sec or until set
                 self.ev.wait(1)
                 active = read_thread.active
@@ -103,14 +105,18 @@ class WriteThread(threading.Thread):
                 for ne in non_empty:
                     nes = tag_show(ne)
                     if ne == active:
-                        left_pcs.append(f'%{{F:0xFFFF00}}[{nes}]%{{F:0xFFFFFF}}')
+                        left_pcs.append(f'%{{F:0xFFFF00}}[{nes}]{F_RESET}')
                     else:
                         left_pcs.append(nes)
 
                 title = read_thread.title
                 if title:
+                    chars_left = 99 - len(re.subn('%{[^}]+}', '', " ".join(left_pcs))[0])
+                    print(f"CL {chars_left}", file=sys.stderr)
+                    if len(title) > chars_left:
+                        title = title[:chars_left - 1] + '\u2026'
                     left_pcs.append(':')
-                    left_pcs.append(f'%{{F:0x00FF00}}{title or ""}%{{F:0xFFFFFF}}')
+                    left_pcs.append(f'%{{F:0x00FF00}}{title}{F_RESET}')
                     
                 pcs = []
                 pcs.append(f'%{{r}}[{power_state()}')
@@ -118,11 +124,11 @@ class WriteThread(threading.Thread):
                 pcs.append(f'{mem_used()}')
                 pcs.append('|')
                 pcs.append(f'{load_avg()}]')
-                pcs.append(f'%{{r}}%{{F:0xFFFF00}}{brightness()} %{{F:0xFFFFFF}}')
-                pcs.append(f'%{{r}}%{{F:0x00FF00}}{volume()} %{{F:0xFFFFFF}}')
+                pcs.append(f'%{{r}}%{{F:0xFFFF00}}{brightness()} {F_RESET}')
+                pcs.append(f'%{{r}}%{{F:0x00FF00}}{volume()} {F_RESET}')
 
                 date = datetime.datetime.now().strftime("%a %d %b %H:%M")
-                pcs.append(f'%{{r}}%{{F:0xFF8000}}{date}%{{F:0xFFFFFF}}')
+                pcs.append(f'%{{r}}%{{F:0xFF8000}}{date}{F_RESET}')
 
                 left_part = " ".join(left_pcs) 
                 right_part = " ".join(pcs)
