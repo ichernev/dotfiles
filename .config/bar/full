@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+LOCAL_BIN="$HOME/.local/bin"
+# { while true; do date; done } | \
+exec $LOCAL_BIN/ristate --tags --title --views-tag | \
+    $HOME/.config/bar/text  | \
+    $LOCAL_BIN/zelbar -B 0x00000000 -F 0xFFFFFF00 -fn 'Droid Sans Mono-15:bold' -g 1800:26

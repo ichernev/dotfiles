@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+import threading
+import time
+import datetime
+import json
+import traceback
+from pathlib import Path
+
+read_thread = None
+write_thread = None
+
+def power_state() -> str:
+    online = Path('/sys/class/power_supply/ACAD/online').read_text().strip()
+    cap = Path('/sys/class/power_supply/BAT1/capacity').read_text().strip()
+    return f"{cap} {'AC' if online else 'BAT'}"
+
+def mem_used() -> str:
+    total = None
+    free = None
+    for line in Path('/proc/meminfo').read_text().split('\n'):
+        if line.startswith('MemTotal:'):
+            total = int(line.split()[1])
+        elif line.startswith('MemFree:'):
+            free = int(line.split()[1])
+
+    perc = int((total - free) / total * 100) 
+    return f'{perc}%'
+
+def load_avg() -> str:
+    pcs = Path('/proc/loadavg').read_text().split()
+    return " ".join(pcs[:3])
+
+def brightness() -> str:
+    bl = Path('/sys/class/backlight/intel_backlight')
+    bl_max = (bl / 'max_brightness').read_text().strip()
+    bl_crnt = (bl / 'brightness').read_text().strip()
+
+    perc = int(bl_crnt) * 100 // int(bl_crnt)
+    return f'{perc}'
+
+def volume() -> str:
+    res = subprocess.run('pamixer --get-volume', shell=True, capture_output=True, text=True)
+    return res.stdout.strip()
+
+
+class ReadThread(threading.Thread):
+    def __init__(self, ev):
+        super().__init__()
+        self.last_state: dict = {}
+        self.ev = ev
+
+    def run(self):
+        # time.sleep(10000)
+        for line in sys.stdin:
+            self.last_state = json.loads(line)
+            print("STATE", self.last_state, file=sys.stderr)
+            print("DBG", self.title, self.active, self.non_empty, file=sys.stderr)
+            self.ev.set()
+            self.ev.clear()
+
+    @property
+    def title(self) -> str | None:
+        return self.last_state.get('title')
+
+    @property
+    def active(self) -> str:
+        return self.last_state.get('tags', {}).get('BOE', ['1'])[0]
+
+    @property
+    def non_empty(self) -> list[str]:
+        tags = self.last_state.get('viewstag', {}).get('BOE', [])
+        return [str(t) for t in set(tags)]
+
+def tag_sort_key(t):
+    return int(t)
+
+def tag_show(t):
+    x = int(t)
+    if x < 10:
+        return str(x % 10)
+    return f'F{x-9}'
+
+class WriteThread(threading.Thread):
+    def __init__(self, ev):
+        super().__init__()
+        self.ev = ev
+
+    def run(self):
+        while True:
+            try:
+                # wait for 1 sec or until set
+                self.ev.wait(1)
+                active = read_thread.active
+                non_empty = read_thread.non_empty
+                if active not in non_empty:
+                    non_empty.append(active)
+                non_empty.sort(key=tag_sort_key)
+
+                left_pcs = []
+                for ne in non_empty:
+                    nes = tag_show(ne)
+                    if ne == active:
+                        left_pcs.append(f'%{{F:0xFFFF00}}[{nes}]%{{F:0xFFFFFF}}')
+                    else:
+                        left_pcs.append(nes)
+
+                title = read_thread.title
+                if title:
+                    left_pcs.append(':')
+                    left_pcs.append(f'%{{F:0x00FF00}}{title or ""}%{{F:0xFFFFFF}}')
+                    
+                pcs = []
+                pcs.append(f'%{{r}}[{power_state()}')
+                pcs.append('|')
+                pcs.append(f'{mem_used()}')
+                pcs.append('|')
+                pcs.append(f'{load_avg()}]')
+                pcs.append(f'%{{r}}%{{F:0xFFFF00}}{brightness()} %{{F:0xFFFFFF}}')
+                pcs.append(f'%{{r}}%{{F:0x00FF00}}{volume()} %{{F:0xFFFFFF}}')
+
+                date = datetime.datetime.now().strftime("%a %d %b %H:%M")
+                pcs.append(f'%{{r}}%{{F:0xFF8000}}{date}%{{F:0xFFFFFF}}')
+
+                left_part = " ".join(left_pcs) 
+                right_part = " ".join(pcs)
+                line = f'{left_part} {right_part}'
+                print(line, flush=True)
+                print(f"LINE: {line}", file=sys.stderr)
+            except Exception as e:
+                traceback.print_exception(e, file=sys.stderr)
+                # print("got e", e, file=sys.stderr)
+
+def main(args):
+    global read_thread
+    global write_thread
+
+    ev = threading.Event()
+    read_thread = ReadThread(ev)
+    write_thread = WriteThread(ev)
+
+    read_thread.start()
+    write_thread.start()
+
+    write_thread.join()
+    read_thread.join()
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
