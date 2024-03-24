@@ -11,9 +11,14 @@
 # Note: the "Super" modifier is also known as Logo, GUI, Windows, Mod4, etc.
 
 # Super+Shift+Return to start an instance of foot (https://codeberg.org/dnkl/foot)
+
 TILER=rivercarro
-TILER_EXE=$HOME/opt/rivercarro-0.3.0/bin/rivercarro
-TILER_ARGS='-inner-gaps 0 -outer-gaps 0 -main-ratio 0.5'
+TILER_EXE=$HOME/.local/bin/rivercarro
+TILER_ARGS='-inner-gaps 0 -outer-gaps 0 -main-ratio 0.5 -per-tag-cfg'
+
+# TILER=rivercarro
+# TILER_EXE=$HOME/opt/rivercarro-0.3.0/bin/rivercarro
+# TILER_ARGS='-inner-gaps 0 -outer-gaps 0 -main-ratio 0.5'
 
 riverctl map normal Super+Shift Return spawn foot
 
@@ -202,6 +207,12 @@ riverctl default-layout $TILER
 $TILER_EXE $TILER_ARGS &
 way-displays > /tmp/way-displays.${XDG_VTNR}.${USER}.log 2>&1 &
 
-waybar &
+# for xdg-desktop-portal-wlr
+export XDG_CURRENT_DESKTOP=river
+systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=river
+
+# waybar &
+$HOME/.config/bar/full &
 nm-applet &
 # blueman-applet &
