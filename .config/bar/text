@@ -13,6 +13,9 @@ from pathlib import Path
 read_thread = None
 write_thread = None
 
+def log(msg):
+    print(f"{datetime.datetime.now().isoformat()}: {msg}", file=sys.stderr)
+
 def power_state() -> str:
     online = Path('/sys/class/power_supply/ACAD/online').read_text().strip()
     cap = Path('/sys/class/power_supply/BAT1/capacity').read_text().strip()
@@ -51,14 +54,16 @@ class ReadThread(threading.Thread):
     def __init__(self, ev):
         super().__init__()
         self.last_state: dict = {}
+        self.last_id = 0
         self.ev = ev
 
     def run(self):
         # time.sleep(10000)
         for line in sys.stdin:
             self.last_state = json.loads(line)
-            print("STATE", self.last_state, file=sys.stderr)
-            print("DBG", self.title, self.active, self.non_empty, file=sys.stderr)
+            self.last_id += 1
+            # print("STATE", self.last_state, file=sys.stderr)
+            log(f"DBG A:{self.active} NE:{self.non_empty}")
             self.ev.set()
             self.ev.clear()
 
@@ -67,21 +72,17 @@ class ReadThread(threading.Thread):
         return self.last_state.get('title')
 
     @property
-    def active(self) -> str:
-        return self.last_state.get('tags', {}).get('BOE', ['1'])[0]
+    def active(self) -> int:
+        return int(self.last_state.get('tags', {}).get('BOE', ['1'])[0])
 
     @property
-    def non_empty(self) -> list[str]:
+    def non_empty(self) -> list[int]:
         tags = self.last_state.get('viewstag', {}).get('BOE', [])
-        return [str(t) for t in set(tags)]
+        return [int(t) for t in set(tags)]
 
-def tag_sort_key(t):
-    return int(t)
-
-def tag_show(t):
-    x = int(t)
+def tag_show(x):
     if x < 10:
-        return str(x % 10)
+        return f'{x % 10}'
     return f'F{x-9}'
 
 class WriteThread(threading.Thread):
@@ -90,16 +91,20 @@ class WriteThread(threading.Thread):
         self.ev = ev
 
     def run(self):
+        skip_wait = False
         while True:
             try:
                 F_RESET = '%{F:0xAAAAAA}'
-                # wait for 1 sec or until set
-                self.ev.wait(1)
+                if not skip_wait:
+                    # wait for 1 sec or until set
+                    self.ev.wait(1)
+                skip_wait = False
+                crnt_id = read_thread.last_id
                 active = read_thread.active
                 non_empty = read_thread.non_empty
                 if active not in non_empty:
                     non_empty.append(active)
-                non_empty.sort(key=tag_sort_key)
+                non_empty.sort()
 
                 left_pcs = []
                 for ne in non_empty:
@@ -112,7 +117,7 @@ class WriteThread(threading.Thread):
                 title = read_thread.title
                 if title:
                     chars_left = 99 - len(re.subn('%{[^}]+}', '', " ".join(left_pcs))[0])
-                    print(f"CL {chars_left}", file=sys.stderr)
+                    log(f"CL {chars_left}")
                     if len(title) > chars_left:
                         title = title[:chars_left - 1] + '\u2026'
                     left_pcs.append(':')
@@ -133,9 +138,14 @@ class WriteThread(threading.Thread):
                 left_part = " ".join(left_pcs) 
                 right_part = " ".join(pcs)
                 line = f'{left_part} {right_part}'
+                log(f"LINE: {line}")
+                if crnt_id != read_thread.last_id:
+                    log("oops, redraw")
+                    skip_wait = True
+                    continue
                 print(line, flush=True)
-                print(f"LINE: {line}", file=sys.stderr)
             except Exception as e:
+                log("SOME SHIT")
                 traceback.print_exception(e, file=sys.stderr)
                 # print("got e", e, file=sys.stderr)
 
