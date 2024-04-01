@@ -133,3 +133,4 @@ dir_in_title
 export TERM=xterm-color
 # local config
 [ -f ~/.localrc ] && . ~/.localrc
+[ -f ~/.conda-init ] && . ~/.conda-init
