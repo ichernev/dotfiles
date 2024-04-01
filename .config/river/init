@@ -150,8 +150,8 @@ do
     riverctl map $mode None XF86Eject spawn 'eject -T'
 
     # Control pulse audio volume with pamixer (https://github.com/cdemoulins/pamixer)
-    riverctl map $mode None XF86AudioRaiseVolume  spawn 'pamixer --allow-boost -i 5'
-    riverctl map $mode None XF86AudioLowerVolume  spawn 'pamixer --allow-boost -d 5'
+    riverctl map $mode None XF86AudioRaiseVolume  spawn 'pamixer --allow-boost -i 3'
+    riverctl map $mode None XF86AudioLowerVolume  spawn 'pamixer --allow-boost -d 3'
     riverctl map $mode None XF86AudioMute         spawn 'pamixer --toggle-mute'
 
     # Control MPRIS aware media players with playerctl (https://github.com/altdesktop/playerctl)
@@ -166,8 +166,9 @@ do
 
     # TODO(Iskren): Start spotify if not started, here
     riverctl map $mode Super+Shift P spawn 'playerctl play-pause'
-    riverctl map $mode Super+Control R spawn 'pamixer --allow-boost -d 5'
-    riverctl map $mode Super+Control T spawn 'pamixer --allow-boost -i 5'
+    riverctl map $mode Super+Shift N  spawn 'playerctl next'
+    riverctl map $mode Super+Control R spawn 'pamixer --allow-boost -d 3'
+    riverctl map $mode Super+Control T spawn 'pamixer --allow-boost -i 3'
     riverctl map $mode Super+Control F spawn 'light -5'
     riverctl map $mode Super+Control G spawn 'light +5'
 done
