@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+selection="$(dmenu_path | dmenu -fn Monospace:size=15 -nb '#000' -nf '#FFF' -sb '#FFF' -sf '#000')"
+exec -- $selection

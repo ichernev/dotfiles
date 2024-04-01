@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import sys
+from pathlib import Path
+
+DEVICE = 'intel_backlight'
+
+def device_path(path):
+    return f'/sys/class/backlight/{DEVICE}/{path}'
+
+def get_percent():
+    current_raw = int(Path(device_path('brightness')).read_text().strip())
+    max_raw = int(Path(device_path('max_brightness')).read_text().strip())
+
+    return (current_raw * 100) / max_raw
+
+def set_percent(percent):
+    max_raw = int(Path(device_path('max_brightness')).read_text().strip())
+    raw_value = int(percent * max_raw / 100)
+    # print(f"writing {raw_value}")
+    Path(device_path('brightness')).write_text(f'{raw_value}\n')
+
+def main(args):
+    percent = get_percent()
+    if args:
+        tweak = args[0]
+        if tweak[0] in ('+', '-'):
+            percent += float(tweak)
+        else:
+            percent = float(tweak)
+        set_percent(percent)
+
+    print(f'{percent:.1f}')
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
