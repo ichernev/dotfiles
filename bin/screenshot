@@ -1,3 +1,8 @@
 #!/bin/bash
 
-exec import -window root "$HOME/Desktop/full_$(date +"%Y-%m-%d_%T").png"
+filename="$HOME/Desktop/full_$(date +"%Y-%m-%d_%T").png"
+if [ "$XDG_SESSION_TYPE" = x11 ]; then
+    exec import -window root "$filename"
+elif [ "$XDG_SESSION_TYPE" = wayland ]; then
+    exec grim -o eDP-1 "$filename"
+fi
