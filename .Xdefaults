@@ -10,8 +10,6 @@
 *scrollTtyKeypress: true
 
 ! normal terminal
-urxvt*font: xft:DejaVu Sans Mono-12
-urxvt*background: #000000
 # urxvt*font: xft:DejaVu Sans Mono-20
 # urxvt*background: #FFFFFF
 
@@ -21,14 +19,14 @@ scratchpad*background: #111111
 # scratchpad*font: xft:Monospace-25
 # scratchpad*background: #FFFFFF
 
-! C-= and C--
-URxvt.keysym.C-0x3d: command:\033]50;xft:Droid Sans Mono-13\007
-! URxvt.keysym.C-0x3d: command:\033]50;xft:Oxygen Mono-12:hintstyle=hintnone:antialias=1\007
-URxvt.keysym.C-0:    command:\033]50;xft:Droid Sans Mono-12\007
-URxvt.keysym.C-0x2d: command:\033]50;xft:Droid Sans Mono-8\007
-! URxvt.perl-ext-common:  default,matcher
-! URxvt.urlLauncher:      /usr/bin/chromium
-! URxvt.matcher.button:   1
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+URxvt.font: xft:DejaVu Sans Mono:size=10
+URxvt.background: #000000
+URxvt.perl-ext-common: default,resize-font
+URxvt.keysym.C-equal: resize-font:bigger
+URxvt.keysym.C-0: resize-font:reset
+URxvt.keysym.4-v: eval:paste_clipboard
 
 XTerm*renderFont: true
 XTerm*faceName: xft:Droid Sans Mono-10

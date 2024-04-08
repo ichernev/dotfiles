@@ -1,0 +1,3 @@
+scratchpad*font: xft:Monospace-12
+URxvt.font: xft:DejaVu Sans Mono:size=12
+XTerm*faceName: xft:Droid Sans Mono-12
