@@ -14,7 +14,7 @@
 
 TILER=rivercarro
 TILER_EXE=$HOME/.local/bin/rivercarro
-TILER_ARGS='-inner-gaps 0 -outer-gaps 0 -main-ratio 0.5 -per-tag-cfg'
+TILER_ARGS='-inner-gaps 0 -outer-gaps 0 -main-ratio 0.5 -per-tag'
 
 # TILER=rivercarro
 # TILER_EXE=$HOME/opt/rivercarro-0.3.0/bin/rivercarro
