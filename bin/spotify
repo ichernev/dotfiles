@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+SPOTIFY=/usr/bin/spotify-launcher
+CFG=$HOME/.config/spotify-launcher.conf
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    sed -i 's/^extra_arg/# extra_arg/' "$CFG"
+else
+    sed -i 's/^# extra_arg/extra_arg/' "$CFG"
+fi
+
+exec $SPOTIFY "$@"
