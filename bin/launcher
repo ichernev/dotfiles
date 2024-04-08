@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+font="Droid Sans Mono:size=13"
+if [ "$(cat /etc/hostname)" = "iframe" ]; then
+    font="Droid Sans Mono:size=15"
+fi
+
+exec dmenu_run -fn "$font" -nb '#000' -nf '#aaa' -sb '#aaa' -sf '#000'

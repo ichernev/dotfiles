@@ -125,7 +125,7 @@ riverctl map normal Super L send-layout-cmd $TILER "main-ratio +0.01"
 riverctl map normal Super Comma send-layout-cmd $TILER "main-count +1"
 riverctl map normal Super Period send-layout-cmd $TILER "main-count -1"
 
-riverctl map normal Super P spawn '/home/iskren/bin/wmenu_runner'
+riverctl map normal Super P spawn 'launcher'
 
 riverctl map normal Super+Shift l spawn 'waylock'
 
