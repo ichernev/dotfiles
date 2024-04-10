@@ -9,6 +9,16 @@
     color: white;
 }
 
+#custom-mine-left, #custom-mine-right {
+    color: #aaa;
+    font-family: Droid Sans Mono;
+    font-weight: bold;
+    font-size: 18px;
+}
+#custom-mine-right {
+    margin-right: 10px;
+}
+
 #memory {
     color: white;
 }

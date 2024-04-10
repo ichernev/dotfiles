@@ -63,7 +63,7 @@ class ReadThread(threading.Thread):
             self.last_state = json.loads(line)
             self.last_id += 1
             # print("STATE", self.last_state, file=sys.stderr)
-            log(f"DBG A:{self.active} NE:{self.non_empty}")
+            # log(f"DBG A:{self.active} NE:{self.non_empty}")
             self.ev.set()
             self.ev.clear()
 
@@ -86,15 +86,34 @@ def tag_show(x):
     return f'F{x-9}'
 
 class WriteThread(threading.Thread):
-    def __init__(self, ev):
+    def __init__(self, ev, mode):
         super().__init__()
         self.ev = ev
+        self.mode = mode
+        # print(f"MODE = {mode}", file=sys.stderr)
+
+    def color(self, hex_col, txt):
+        if self.mode == 'zelbar':
+            return f'%{{F:0x{hex_col}}}{txt}%{{F:0xAAAAAA}}'
+        elif self.mode.startswith('waybar-'):
+            return f'<span foreground="#{hex_col}">{txt}</span>'
+        raise Exception("Woops")
+
+    def process_line(self, line):
+        if self.mode == 'zelbar':
+            return line
+        elif self.mode == 'waybar-left':
+            pos = line.index('%{r}')
+            return line[:pos]
+        elif self.mode == 'waybar-right':
+            pos = line.index('%{r}')
+            return line[pos:].replace('%{r}', '') + '     '
+        raise Exception("woops")
 
     def run(self):
         skip_wait = False
         while True:
             try:
-                F_RESET = '%{F:0xAAAAAA}'
                 if not skip_wait:
                     # wait for 1 sec or until set
                     self.ev.wait(1)
@@ -110,44 +129,46 @@ class WriteThread(threading.Thread):
                 for ne in non_empty:
                     nes = tag_show(ne)
                     if ne == active:
-                        left_pcs.append(f'%{{F:0xFFFF00}}[{nes}]{F_RESET}')
+                        left_pcs.append(self.color('FFFF00', f'[{nes}]'))
                     else:
                         left_pcs.append(nes)
 
                 title = read_thread.title
                 if title:
                     chars_left = 99 - len(re.subn('%{[^}]+}', '', " ".join(left_pcs))[0])
-                    log(f"CL {chars_left}")
+                    # log(f"CL {chars_left}")
                     if len(title) > chars_left:
                         title = title[:chars_left - 1] + '\u2026'
                     left_pcs.append(':')
-                    left_pcs.append(f'%{{F:0x00FF00}}{title}{F_RESET}')
+                    left_pcs.append(self.color('00FF00', title))
                     
                 pcs = []
+                dummy_space = ' ' if self.mode == 'zelbar' else ''
                 pcs.append(f'%{{r}}[{power_state()}')
                 pcs.append('|')
                 pcs.append(f'{mem_used()}')
                 pcs.append('|')
                 pcs.append(f'{load_avg()}]')
-                pcs.append(f'%{{r}}%{{F:0xFFFF00}}{brightness()} {F_RESET}')
-                pcs.append(f'%{{r}}%{{F:0x00FF00}}{volume()} {F_RESET}')
+                pcs.append('%{r}' + self.color('FFFF00', f'{brightness()}{dummy_space}'))
+                pcs.append('%{r}' + self.color('00FF00', f'{volume()}{dummy_space}'))
 
                 date = datetime.datetime.now().strftime("%a %d %b %H:%M")
-                pcs.append(f'%{{r}}%{{F:0xFF8000}}{date}{F_RESET}')
+                pcs.append(f'%{{r}}' + self.color('FF8000', date))
 
                 left_part = " ".join(left_pcs) 
                 right_part = " ".join(pcs)
                 line = f'{left_part} {right_part}'
-                log(f"LINE: {line}")
                 if crnt_id != read_thread.last_id:
-                    log("oops, redraw")
+                    # log("oops, redraw")
                     skip_wait = True
                     continue
+                line = self.process_line(line)
+                # log(f"LINE: {line}")
                 print(line, flush=True)
             except Exception as e:
-                log("SOME SHIT")
+                # log("SOME SHIT")
                 traceback.print_exception(e, file=sys.stderr)
-                # print("got e", e, file=sys.stderr)
+                print("got e", e, file=sys.stderr)
 
 def main(args):
     global read_thread
@@ -155,7 +176,7 @@ def main(args):
 
     ev = threading.Event()
     read_thread = ReadThread(ev)
-    write_thread = WriteThread(ev)
+    write_thread = WriteThread(ev, args[0])
 
     read_thread.start()
     write_thread.start()

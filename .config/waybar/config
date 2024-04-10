@@ -3,43 +3,49 @@
     // "layer": "top", // Waybar at top layer
     // "position": "bottom", // Waybar position (top|bottom|left|right)
     "height": 30, // Waybar height (to be removed for auto height)
-    // "width": 1280, // Waybar width
+    // "width": 100, // Waybar width
     "spacing": 4, // Gaps between modules (4px)
+    // "mode": "overlay",
     // Choose the order of the modules
     "modules-left": [
-        // "sway/workspaces",
-        // "sway/mode",
-        // "sway/scratchpad",
-        // "custom/media"
-        // "river/mode",
-        // "river/tags",
-        // "river/layout"
-        "river/window"
+        "custom/mine-left",
+        "river/tags"
     ],
     "modules-center": [
     ],
     "modules-right": [
+        "custom/mine-right",
         // "mpd",
         // "idle_inhibitor",
         // "pulseaudio",
         // "network",
         // "power-profiles-daemon",
         // "cpu",
-        "memory",
+        // "memory",
         // "temperature",
         // "backlight",
         // "keyboard-state",
         // "sway/language",
-        "battery",
+        // "battery",
         // "battery#bat2",
-        "clock",
+        // "clock",
         "tray"
     ],
+    "custom/mine-left": {
+        "exec": "/home/iskren/.config/bar/waybar left",
+        "restart-interval": 1
+        // "return-type": "json"
+    },
+    "custom/mine-right": {
+        "exec": "/home/iskren/.config/bar/waybar right",
+        "restart-interval": 1
+        // "return-type": "json"
+    },
     "river/window": {
         "max-length": 250
     },
     "river/tags": {
-        "num-tags": 14,
+        "num-tags": 0,
         "tag-labels": [
             "1","2","3","4","5","6","7","8","9",
             "F1","F2","F3","F4","F5"
@@ -116,7 +122,7 @@
     //     }
     // },
     "tray": {
-        // "icon-size": 21,
+        "icon-size": 20,
         "spacing": 5,
         "reverse-direction": true
     },
