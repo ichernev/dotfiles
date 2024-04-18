@@ -33,13 +33,13 @@
     ],
     "custom/mine-left": {
         "exec": "/home/iskren/.config/bar/waybar left",
-        "restart-interval": 1
-        // "return-type": "json"
+        "restart-interval": 1,
+        "return-type": "json"
     },
     "custom/mine-right": {
         "exec": "/home/iskren/.config/bar/waybar right",
-        "restart-interval": 1
-        // "return-type": "json"
+        "restart-interval": 1,
+        "return-type": "json"
     },
     "river/window": {
         "max-length": 250

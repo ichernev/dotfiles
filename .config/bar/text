@@ -109,10 +109,12 @@ class WriteThread(threading.Thread):
             return line
         elif self.mode == 'waybar-left':
             pos = line.index('%{r}')
-            return line[:pos]
+            raw_txt = line[:pos]
+            return json.dumps({'text': raw_txt})
         elif self.mode == 'waybar-right':
             pos = line.index('%{r}')
-            return line[pos:].replace('%{r}', '') + '     '
+            raw_txt = line[pos:].replace('%{r}', '') + '     '
+            return json.dumps({'text': raw_txt})
         raise Exception("woops")
 
     def run(self):
