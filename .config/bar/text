@@ -10,6 +10,11 @@ import traceback
 import re
 from pathlib import Path
 
+from signal import signal, SIGPIPE, SIG_DFL
+
+# make sure SIGPIPE kills this shit
+signal(SIGPIPE,SIG_DFL)
+
 read_thread = None
 write_thread = None
 
