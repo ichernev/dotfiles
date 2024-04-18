@@ -106,7 +106,7 @@ rmn None XF86MonBrightnessUp   spawn 'light +5'
 rmn None XF86MonBrightnessDown spawn 'light -5'
 
 # TODO(Iskren): Start spotify if not started, here
-rmn Super+Shift P spawn 'playerctl play-pause'
+rmn Super+Shift P spawn 'ensure-spotify; playerctl play-pause'
 rmn Super+Shift N  spawn 'playerctl next'
 rmn Super+Control R spawn 'pamixer --allow-boost -d 3'
 rmn Super+Control T spawn 'pamixer --allow-boost -i 3'
