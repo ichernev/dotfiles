@@ -22,7 +22,7 @@ def log(msg):
     print(f"{datetime.datetime.now().isoformat()}: {msg}", file=sys.stderr)
 
 def power_state() -> str:
-    online = Path('/sys/class/power_supply/ACAD/online').read_text().strip()
+    online = Path('/sys/class/power_supply/ACAD/online').read_text().strip() == '1'
     cap = Path('/sys/class/power_supply/BAT1/capacity').read_text().strip()
     return f"{cap} {'AC' if online else 'BAT'}"
 
@@ -35,7 +35,7 @@ def mem_used() -> str:
         elif line.startswith('MemFree:'):
             free = int(line.split()[1])
 
-    perc = int((total - free) / total * 100) 
+    perc = int((total - free) / total * 100)
     return f'{perc}%'
 
 def load_avg() -> str:
@@ -146,7 +146,7 @@ class WriteThread(threading.Thread):
                         title = title[:chars_left - 1] + '\u2026'
                     left_pcs.append(':')
                     left_pcs.append(self.color('00FF00', title))
-                    
+
                 pcs = []
                 dummy_space = ' ' if self.mode == 'zelbar' else ''
                 pcs.append(f'%{{r}}[{power_state()}')
@@ -160,7 +160,7 @@ class WriteThread(threading.Thread):
                 date = datetime.datetime.now().strftime("%a %d %b %H:%M")
                 pcs.append(f'%{{r}}' + self.color('FF8000', date))
 
-                left_part = " ".join(left_pcs) 
+                left_part = " ".join(left_pcs)
                 right_part = " ".join(pcs)
                 line = f'{left_part} {right_part}'
                 if crnt_id != read_thread.last_id:
