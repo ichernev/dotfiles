@@ -27,7 +27,9 @@ fi
 
 # Auto-scale QT Apps to something sane
 # Force X rendering (scale factor causes issues before Qt 6.5.0)
-export QT_SCALE_FACTOR=1.3
-export QT_QPA_PLATFORM=xcb
+if [ "$(hostname)" = 'iframe' ]; then
+    export QT_SCALE_FACTOR=1.3
+    export QT_QPA_PLATFORM=xcb
+fi
 
 unset in_path
