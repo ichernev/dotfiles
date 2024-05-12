@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+
+import sys
+import os.path
+import re
+
+def usage(msg):
+    print("%s" % msg)
+    print("$0 [-f] PATTERN REPL FILES...")
+    sys.exit(1)
+
+def main(args):
+    dry_run = True
+    if len(args) < 3:
+        usage('not enough args')
+    if args[0] == '-f':
+        dry_run = False
+        args = args[1:]
+    pattern = args[0]
+    repl = args[1]
+    files = args[2:]
+    for fn in files:
+        bn = os.path.basename(fn)
+        dn = os.path.dirname(fn)
+        fixed = re.sub(pattern, repl, bn)
+        newname = os.path.join(dn, fixed)
+        print("%s -> %s" % (fn, newname))
+        if not dry_run:
+            os.rename(fn, newname)
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
