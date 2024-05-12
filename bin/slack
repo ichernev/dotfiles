@@ -2,7 +2,7 @@
 
 SLACK=/usr/bin/slack
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-    exec $SLACK "$@"
+    exec $SLACK --ozone-platform=wayland "$@"
 else
     exec $SLACK --disable-gpu-compositing "$@"
 fi
