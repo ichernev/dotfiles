@@ -82,7 +82,8 @@ rmn Super Period send-layout-cmd $TILER "main-count -1"
 
 rmn Super P spawn 'launcher'
 
-rmn Super+Shift l spawn 'waylock'
+# rmn Super+Shift l spawn 'waylock'
+riverctl map normal Super+Shift l spawn 'waylock'
 
 rmn Control+Shift 3 spawn '/home/iskren/bin/screenshot'
 rmn Control+Shift 4 spawn '/home/iskren/bin/cropscreen'
