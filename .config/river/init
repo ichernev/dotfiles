@@ -160,6 +160,9 @@ systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP
 systemctl --user restart dropbox.service
 dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP
 
+swayidle -w \
+    timeout 600 'waylock -init-color 0xd561dd' \
+    before-sleep 'waylock -init-color 0xd561dd' &
 waybar &
 # $HOME/.config/bar/full &
 nm-applet &
