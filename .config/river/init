@@ -97,18 +97,18 @@ rmn None XF86AudioLowerVolume  spawn 'pamixer --allow-boost -d 3'
 rmn None XF86AudioMute         spawn 'pamixer --toggle-mute'
 
 # Control MPRIS aware media players with playerctl (https://github.com/altdesktop/playerctl)
-rmn None XF86AudioMedia spawn 'playerctl play-pause'
-rmn None XF86AudioPlay  spawn 'playerctl play-pause'
-rmn None XF86AudioPrev  spawn 'playerctl previous'
-rmn None XF86AudioNext  spawn 'playerctl next'
+# rmn None XF86AudioMedia spawn 'playerctl play-pause'
+# rmn None XF86AudioPlay  spawn 'playerctl play-pause'
+# rmn None XF86AudioPrev  spawn 'playerctl previous'
+# rmn None XF86AudioNext  spawn 'playerctl next'
 
 # Control screen backlight brightness with light (https://github.com/haikarainen/light)
 rmn None XF86MonBrightnessUp   spawn 'light +5'
 rmn None XF86MonBrightnessDown spawn 'light -5'
 
 # TODO(Iskren): Start spotify if not started, here
-rmn Super+Shift P spawn 'ensure-spotify; playerctl play-pause'
-rmn Super+Shift N  spawn 'playerctl next'
+rmn Super+Shift P spawn 'spotctl playpause'
+rmn Super+Shift N  spawn 'spotctl next'
 rmn Super+Control R spawn 'pamixer --allow-boost -d 3'
 rmn Super+Control T spawn 'pamixer --allow-boost -i 3'
 rmn Super+Control F spawn 'light -5'
