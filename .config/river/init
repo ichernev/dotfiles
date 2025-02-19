@@ -137,10 +137,14 @@ riverctl keyboard-layout  \
     -options grp:alt_shift_toggle,ctrl:nocaps \
     us,bg
 
+# riverctl list-inputs
+# riverctl list-input-configs
+# https://man.archlinux.org/man/extra/river/riverctl.1.en
 TOUCHPAD_DEV=pointer-2362-628-PIXA3854:00_093A:0274_Touchpad
 
 # this enables two-finger click for right mouse button
-riverctl input $TOUCHPAD_DEV click-method clickfinger
+riverctl input $TOUCHPAD_DEV tap enabled
+riverctl input $TOUCHPAD_DEV tap-button-map left-right-middle
 
 # Set the default layout generator to be rivertile and start it.
 # River will send the process group of the init executable SIGTERM on exit.
