@@ -1,0 +1,107 @@
+#!/bin/sh
+#  This file is part of sbctl.
+
+COMMAND="$1"
+KERNEL_VERSION="$2"
+ENTRY_DIR_ABS="$3"
+# shellcheck disable=SC2034  # Unused variables left for readability
+KERNEL_IMAGE="$4"
+
+IMAGE_FILE="$ENTRY_DIR_ABS/linux"
+
+if [ "$KERNEL_INSTALL_LAYOUT" = "uki" ]; then
+	UKI_DIR="$KERNEL_INSTALL_BOOT_ROOT/EFI/Linux"
+	TRIES_FILE="${KERNEL_INSTALL_CONF_ROOT:-/etc/kernel}/tries"
+
+	if [ -f "$TRIES_FILE" ]; then
+		read -r TRIES <"$TRIES_FILE"
+		if ! echo "$TRIES" | grep -q '^[0-9][0-9]*$'; then
+			echo "$TRIES_FILE does not contain an integer." >&2
+			exit 1
+		fi
+		IMAGE_FILE="$UKI_DIR/$KERNEL_INSTALL_ENTRY_TOKEN-$KERNEL_VERSION+$TRIES.efi"
+	else
+		IMAGE_FILE="$UKI_DIR/$KERNEL_INSTALL_ENTRY_TOKEN-$KERNEL_VERSION.efi"
+	fi
+fi
+
+# echo "POST-INST CMD=$COMMAND KV=$KERNEL_VERSION EDA=$ENTRY_DIR_ABS KI=$KERNEL_IMAGE IF=$IMAGE_FILE"
+# sha1sum "$IMAGE_FILE"
+ 
+EFI_TARGET=/efi/EFI/BOOT/BOOTx64.EFI
+
+ver_from_cand() {
+    cand="$1"
+    ver=${cand#/boot/EFI/Linux/$mid-}
+    ver=${ver%.efi}
+    echo "$ver"
+}
+
+setup_efi() {
+    cand="$1"
+    existing="$2"
+
+    if [ $existing = 1 ]; then
+        echo "Using existing efi $(ver_from_cand $cand) from $(stat -c %w $cand)"
+    else
+        cp $cand $EFI_TARGET
+        echo "Using efi $(ver_from_cand $cand) from $(stat -c %w $cand)"
+    fi
+}
+
+ensure_installed() {
+    if [ -e "$EFI_TARGET" ]; then
+        targ_hash=$(sha1sum < $EFI_TARGET)
+    else
+        targ_hash=x
+    fi
+
+    mid=$(cat /etc/machine-id)
+    any_cand=
+    best_cand=
+    for uki_file in $(ls /boot/EFI/Linux); do
+        cand="/boot/EFI/Linux/$uki_file"
+        cand_hash=$(sha1sum < "$cand")
+        if [ "$cand_hash" = "$targ_hash" ]; then
+            setup_efi $cand 1
+            exit 0
+        fi
+        any_cand="$cand"
+        if [[ "$ver" == "*lts*" ]]; then
+            # avoid lts if possible
+            continue
+        fi
+        best_cand="$cand"
+    done
+
+    if [ -n "$best_cand" ]; then
+        setup_efi $best_cand 0
+    elif [ -n "$any_cand" ]; then
+        setup_efi $any_cand 0
+    elif [ "$targ_hash" = 'x' ]; then
+        echo "WARNING!!! No boot options present"
+    else
+        echo "WARNING!!! Old kernel setup as default"
+    fi
+}
+
+ensure_installed
+# case "$COMMAND" in
+# add)
+# 	printf 'sbctl: Signing kernel %s INSTALL\n' "$IMAGE_FILE"
+# 
+# 	# exit without error if keys don't exist
+# 	# https://github.com/Foxboron/sbctl/issues/187
+# 	if ! [ "$(sbctl setup --print-state --json | awk '/installed/ { gsub(/,$/,"",$2); print $2 }')" = "true" ]; then
+# 		echo "Secureboot key directory doesn't exist, not signing!"
+# 		exit 0
+# 	fi
+# 
+# 	sbctl sign "$IMAGE_FILE" 1>/dev/null
+# 	;;
+# remove)
+# 	[ "$KERNEL_INSTALL_VERBOSE" -gt 0 ] &&
+# 		printf 'sbctl: Removing kernel %s from signing database\n' "$IMAGE_FILE"
+# 	sbctl remove-file "$IMAGE_FILE" 1>/dev/null || :
+# 	;;
+# esac
